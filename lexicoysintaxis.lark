@@ -1,0 +1,80 @@
+start: program
+
+program: modulos main
+
+modulos: modulos1
+modulos1: funcion modulos |
+
+funcion: "func" tipo ":" ID "(" func_vars ")" bloque_ret | 
+
+main: "main" bloque_ret
+
+func_vars: tipo ":" ID func_vars1 |
+func_vars1: "," func_vars |
+
+bloque_ret: "{" vars estatuto1 RET expresion ";" "}"
+bloque: "{" vars estatuto1 "}"
+estatuto1: estatuto2 |
+estatuto2: estatuto estatuto1
+
+estatuto: while | condicion | estatuto4
+estatuto4: estatuto5 ";"
+estatuto5: llamada | asignacion
+
+llamada: ID "(" parametros ")"
+
+parametros: expresion parametros2
+parametros2: "," parametros | 
+
+asignacion: ID "=" expresion
+
+expresion: not expresion1
+not: "!" |
+
+expresion1: expresion2 expresion4
+expresion4: simbolo3 expresion1 |
+simbolo3: "&&" | "||"
+
+expresion2: exp expresion3
+expresion3: simbolo expresion2 |
+simbolo: "<" | ">" | "!=" | "<=" | ">=" | "=="
+
+exp: termino exp1 
+exp1: simbolo1 exp |
+simbolo1: "+" | "-"
+
+termino: factor termino1
+termino1: simbolo2 termino |
+simbolo2: "*" | "/" 
+
+factor: "(" expresion ")" | var_cte
+
+condicion: "if" "(" expresion ")" bloque condicion1
+condicion1: "else" bloque | 
+
+while: "while" "(" expresion ")" bloque
+
+vars: vars1
+vars1: tipo ":" ID "=" expresion ";" vars |
+
+var_cte: ID | SIGNED_FLOAT | SIGNED_INT | llamada | TRUE | FALSE | ESCAPED_STRING
+
+tipo: tipo1 tipo2
+tipo1: INT | FLOAT | DF
+tipo2: "[" NUMBER "]" |
+
+ID: /[a-zA-Z_][a-zA-Z0-9_]*/
+INT: "int"
+FLOAT: "float"
+DF: "dataframe"
+TRUE: "true"
+FALSE: "false"
+RET: "ret"
+
+
+%import common.SIGNED_FLOAT
+%import common.SIGNED_INT
+%import common.NUMBER
+%import common.ESCAPED_STRING
+%import common.WS
+%ignore WS

@@ -1,0 +1,27 @@
+func int : add (int : x, int : y){
+  ret x + y;
+}
+func float : sub (int : x, int : y){
+  ret x - y;
+}
+
+main {
+  dataframe : df = in("test.csv");
+  int[2] : i = 1;
+  float : f = 2.0003;
+  int : z = (x+y*3)/add(2+3, 2);
+  
+  i = 2;
+  if(!(f && i || z)){
+    out("mas");
+  }
+   else {
+    out("igual");
+  }
+
+  while(i < 5){
+    i = i + 1;
+    out(i);
+  }
+  ret 0;
+}
