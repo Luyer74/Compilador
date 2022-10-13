@@ -1,4 +1,4 @@
-#Define cubo sintactico como un diccionario anidado
+#Define cubo semántico como un diccionario anidado
 
 cubo = {
   '+' : { 
