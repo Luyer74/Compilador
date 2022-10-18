@@ -1,8 +1,7 @@
-func int : add (int : x, int : y){
-  ret x + y;
-}
-
 main {
-  out(1 + 2);
+  float : f;
+  int : i;
+
+  i = 2 + 1 * 3 - 4 / 2;
   ret 0;
 }

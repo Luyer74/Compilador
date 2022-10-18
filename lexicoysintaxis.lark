@@ -10,10 +10,11 @@ funcion: "func" tipo1 ":" ID "(" func_vars? ")" bloque_ret |
 func_vars: tipo ":" ID func_vars1 
 func_vars1: "," func_vars |
 
-main: "main" bloque_ret
+main: "main" main_start bloque_ret
+main_start: 
 
 bloque_ret: "{" vars estatuto1 RET expresion ";" "}"
-bloque: "{" vars estatuto1 "}"
+bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
@@ -39,13 +40,15 @@ expresion2: exp expresion3
 expresion3: simbolo expresion2 |
 simbolo: "<" | ">" | "!=" | "<=" | ">=" | "=="
 
-exp: termino exp1 
+exp: termino evaluacion2 exp1 
 exp1: simbolo1 exp |
-simbolo1: "+" | "-"
+simbolo1: "+" -> push_sum | "-" -> push_res
+evaluacion2:
 
-termino: factor termino1
+termino: factor evaluacion1 termino1
 termino1: simbolo2 termino |
-simbolo2: "*" | "/" 
+simbolo2: "*" -> push_mul | "/" -> push_div
+evaluacion1: 
 
 factor: "(" expresion ")" | var_cte
 
@@ -54,25 +57,26 @@ condicion1: "else" bloque |
 
 while: "while" "(" expresion ")" bloque
 
-vars: vars1
-vars1: tipo ":" ID "=" expresion ";" vars |
+vars: vars1?
+vars1: tipo ":" ID vars2? ";" vars
+vars2: "=" expresion
 
-var_cte: ID -> un_id
-| SIGNED_FLOAT 
-| SIGNED_INT 
-| llamada 
-| TRUE 
-| FALSE 
-| ESCAPED_STRING
+var_cte: ID -> id
+| SIGNED_FLOAT -> flo
+| SIGNED_INT -> integ
+| llamada -> call
+| TRUE  -> true
+| FALSE  -> false
+| ESCAPED_STRING -> string
 
 tipo: tipo1 tipo2
-tipo1: INT | FLOAT | VOID
+tipo1: INT | FLOAT | STRING
 tipo2: "[" NUMBER "]" |
 
 ID: /[a-zA-Z_][a-zA-Z0-9_]*/
 INT: "int"
 FLOAT: "float"
-DF: "dataframe"
+STRING: "string"
 TRUE: "true"
 FALSE: "false"
 RET: "ret"

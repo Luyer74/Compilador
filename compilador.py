@@ -5,7 +5,6 @@ l = Lark(open("lexicoysintaxis.lark", "r").read())
 try:
   input = open("test1.txt", "r").read()
   arbol = l.parse(input)
-  # print(l.parse(input))
   print("Correct Input")
 except EOFError:
   print(EOFError)
@@ -14,3 +13,6 @@ except EOFError:
 Luyer().visit_topdown(arbol)
 
 print(directorio_funciones)
+print(pilaO)
+print(pOper)
+print(pTipos)
