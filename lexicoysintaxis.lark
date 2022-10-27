@@ -18,27 +18,27 @@ bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
-estatuto: while | condicion | estatuto4
-estatuto4: estatuto5 ";"
-estatuto5: llamada | asignacion
+estatuto: while | condicion | llamada | asignacion
 
-llamada: ID "(" parametros ")"
+llamada: ID "(" parametros ")" ";"
 
 parametros: expresion parametros2
 parametros2: "," parametros | 
 
-asignacion: ID "=" expresion
+asignacion: ID "=" push_asg expresion assign_val ";"
 
 expresion: not expresion1
 not: "!" |
 
-expresion1: expresion2 expresion4
+expresion1: expresion2 evaluacion4 expresion4
 expresion4: simbolo3 expresion1 |
-simbolo3: "&&" | "||"
+simbolo3: "&&" -> push_and | "||" -> push_or
+evaluacion4:
 
-expresion2: exp expresion3
+expresion2: exp evaluacion3 expresion3
 expresion3: simbolo expresion2 |
-simbolo: "<" | ">" | "!=" | "<=" | ">=" | "=="
+simbolo: "<" -> push_gt | ">" -> push_lt | "!=" -> push_ne | "<=" -> push_get | ">=" -> push_let | "==" -> push_eq
+evaluacion3:
 
 exp: termino evaluacion2 exp1 
 exp1: simbolo1 exp |
@@ -59,7 +59,10 @@ while: "while" "(" expresion ")" bloque
 
 vars: vars1?
 vars1: tipo ":" ID vars2? ";" vars
-vars2: "=" expresion
+vars2: asg_sign push_asg expresion assign_val
+asg_sign: "="
+push_asg:
+assign_val:
 
 var_cte: ID -> id
 | SIGNED_FLOAT -> flo
@@ -70,13 +73,14 @@ var_cte: ID -> id
 | ESCAPED_STRING -> string
 
 tipo: tipo1 tipo2
-tipo1: INT | FLOAT | STRING
+tipo1: INT | FLOAT | STRING | BOOL
 tipo2: "[" NUMBER "]" |
 
 ID: /[a-zA-Z_][a-zA-Z0-9_]*/
 INT: "int"
 FLOAT: "float"
 STRING: "string"
+BOOL : "bool"
 TRUE: "true"
 FALSE: "false"
 RET: "ret"

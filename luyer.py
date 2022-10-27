@@ -62,7 +62,15 @@ class Luyer(Visitor):
         nombre = str(tree.children[0].children[1])
         variable = {'nombre' : nombre, 'tipo' : tipo}
 
+        #Si la asignación se realiza en la declaración, hay que meter el tipo y nombre en las pilas
+        if tree.children[0].children[2].children and tree.children[0].children[2].children[0].data.value == 'asg_sign':
+            pilaO.append(nombre)
+            pTipos.append(tipo)
+
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        #checar doble declaración
+        if nombre in tabla_vars:
+            raise duplicateVariableError(f"Variable {nombre} is alredady defined.")
         tabla_vars[nombre] = variable
     
 
@@ -78,13 +86,44 @@ class Luyer(Visitor):
     def push_res(self, tree):
         pOper.append('-')
 
+    def push_gt(self, tree):
+        pOper.append('<')
+
+    def push_lt(self, tree):
+        pOper.append('>')
+    
+    def push_get(self, tree):
+        pOper.append('<=')
+
+    def push_let(self, tree):
+        pOper.append('>=')
+
+    def push_eq(self, tree):
+        pOper.append('==')
+
+    def push_ne(self, tree):
+        pOper.append('!=')
+
+    def push_and(self, tree):
+        pOper.append('&&')
+
+    def push_or(self, tree):
+        pOper.append('||')
+    
+    def push_asg(self, tree):
+        pOper.append('=')
+
     def id(self, tree):
         name = str(tree.children[0].value)
 
         #checar si la variable está declarada
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         if name in tabla_vars:
-            pilaO.append(name)
+            if 'valor' in tabla_vars[name]:
+                pilaO.append(tabla_vars[name]['valor'])
+                pTipos.append(tabla_vars[name]['tipo'])
+            else:
+                raise variableNoValue(f"Variable {name} has no value")
         else:
             raise variableNotFoundError(f"Variable {name} is not defined.")
 
@@ -100,6 +139,7 @@ class Luyer(Visitor):
 
     def string(self, tree):
         value = str(tree.children[0].value)
+        value = value.replace('"', '')
         pTipos.append('string')
         pilaO.append(value)
 
@@ -116,6 +156,11 @@ class Luyer(Visitor):
                 if tipoRes == 'ERROR':
                     raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
                 res = op1 * op2 if pOper[-1] == '*' else op1 / op2
+                # Si el resultado de una división es entera, entonces hay que manejarlo como entero
+                if tipoRes == 'float' and pOper[-1] == '/' and res.is_integer():
+                    tipoRes = 'int'
+                    res = int(res)
+                #Generar Cuádruplo
                 oper = pOper.pop()
                 print(oper, op1, op2, res)
                 pilaO.append(res)
@@ -138,4 +183,80 @@ class Luyer(Visitor):
                 print(oper, op1, op2, res)
                 pilaO.append(res)
                 pTipos.append(tipoRes)
-        
+
+    def evaluacion3(self, tree):
+        #Tercera evaluación, para comparaciones
+        comp = ['<', '>', "==", "!=", "<=", ">="]
+        if pOper:
+            if pOper[-1] in comp:
+                op2 = pilaO.pop()
+                op1 = pilaO.pop()
+                tipoOp2 = pTipos.pop()
+                tipoOp1 = pTipos.pop()
+                #checar en cubo semántico
+                tipoRes = cubo[pOper[-1]][tipoOp1][tipoOp2]
+                if tipoRes == 'ERROR':
+                    raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
+                
+                oper = pOper.pop()
+                if oper == '<':
+                    res = op1 < op2
+                elif oper == '>':
+                    res = op1 > op2
+                elif oper == '==':
+                    res = op1 == op2
+                elif oper == '>=':
+                    res = op1 >= op2
+                elif oper == '<=':
+                    res = op1 <= op2
+                elif oper == '!=':
+                    res = op1 != op2
+                print(oper, op1, op2, res)
+                pilaO.append(res)
+                pTipos.append(tipoRes)
+
+    def evaluacion4(self, tree):
+        #Segunda evaluación, checamos si hay sumas o restas pendientes
+        if pOper:
+            if pOper[-1] == '&&' or pOper[-1] == '||':
+                op2 = pilaO.pop()
+                op1 = pilaO.pop()
+                tipoOp2 = pTipos.pop()
+                tipoOp1 = pTipos.pop()
+                #checar en cubo semántico
+                tipoRes = cubo[pOper[-1]][tipoOp1][tipoOp2]
+                if tipoRes == 'ERROR':
+                    raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
+                res = op1 and op2 if pOper[-1] == '&&' else op1 or op2
+                oper = pOper.pop()
+                print(oper, op1, op2, res)
+                pilaO.append(res)
+                pTipos.append(tipoRes)
+
+
+    def assign_val(self, tree):
+        if pOper:
+            if pOper[-1] == '=':
+                op2 = pilaO.pop()
+                op1 = pilaO.pop()
+                tipoOp2 = pTipos.pop()
+                tipoOp1 = pTipos.pop()
+                #checar en cubo semántico
+                tipoRes = cubo[pOper[-1]][tipoOp1][tipoOp2]
+                if tipoRes == 'ERROR':
+                    raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
+
+                pOper.pop()
+                #Asignar valor
+                directorio_funciones[self.scope]['tabla_vars'][op1]['valor'] = op2
+
+    def asignacion(self, tree):
+        #Buscar variable en directorio
+        name = tree.children[0]
+        #Si no se encuentra en directorio, error
+        if name not in directorio_funciones[self.scope]['tabla_vars']:
+            raise variableNotFoundError(f"Variable {name} is not defined.")
+        tipo = directorio_funciones[self.scope]['tabla_vars'][name]['tipo']
+        #Push nombre y tipo para futura asignación
+        pTipos.append(tipo)
+        pilaO.append(name)

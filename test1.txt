@@ -1,7 +1,12 @@
 main {
-  float : f;
+  float : f = 0.2 + 3;
   int : i;
+  bool : h;
+  int : g;
 
   i = 2 + 1 * 3 - 4 / 2;
+  g = 50 * 2000;
+  h =  10 != 11 || "owo" == "owo";
+  g = i + g;
   ret 0;
 }

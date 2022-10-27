@@ -209,6 +209,32 @@ cubo = {
       'bool' : 'ERROR'
     }
   }, 
+  '=' : { 
+    'int' : {
+      'int' : 'int',
+      'float' : 'ERROR',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'float' : {
+      'int' : 'float',
+      'float' : 'float',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'string' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'string',
+      'bool' : 'ERROR'
+    },
+    'bool' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'ERROR',
+      'bool' : 'bool'
+    }
+  }, 
   '&&' : { 
     'int' : {
       'int' : 'bool',

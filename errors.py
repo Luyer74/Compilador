@@ -3,3 +3,9 @@ class functionNameError(Exception):
 
 class variableNotFoundError(Exception):
   pass
+
+class duplicateVariableError(Exception):
+  pass
+
+class variableNoValue(Exception):
+  pass
