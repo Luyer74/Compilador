@@ -16,3 +16,9 @@ print(directorio_funciones)
 print(pilaO)
 print(pOper)
 print(pTipos)
+
+cont = 1
+for cuad in cuadruplos:
+  print(cont)
+  cont += 1
+  cuad.print_quad()

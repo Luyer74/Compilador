@@ -52,10 +52,16 @@ evaluacion1:
 
 factor: "(" expresion ")" | var_cte
 
-condicion: "if" "(" expresion ")" bloque condicion1
-condicion1: "else" bloque | 
+condicion: "if" "(" expresion ")" check_if bloque condicion1 end_if
+condicion1: push_else "else" bloque | 
+check_if:
+end_if:
+push_else:
 
-while: "while" "(" expresion ")" bloque
+while: "while" push_while "(" expresion ")" check_while bloque end_while
+push_while:
+check_while:
+end_while:
 
 vars: vars1?
 vars1: tipo ":" ID vars2? ";" vars
@@ -64,12 +70,12 @@ asg_sign: "="
 push_asg:
 assign_val:
 
-var_cte: ID -> id
-| SIGNED_FLOAT -> flo
+var_cte: SIGNED_FLOAT -> flo
 | SIGNED_INT -> integ
 | llamada -> call
 | TRUE  -> true
 | FALSE  -> false
+| ID -> id
 | ESCAPED_STRING -> string
 
 tipo: tipo1 tipo2

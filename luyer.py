@@ -1,5 +1,4 @@
 import collections
-from os import popen
 from lark import Visitor
 from errors import *
 from quad import *
@@ -15,6 +14,7 @@ cuadruplos = []
 pilaO = collections.deque()
 pOper = collections.deque()
 pTipos = collections.deque()
+pSaltos = collections.deque()
 
 
 class Luyer(Visitor):
@@ -73,7 +73,7 @@ class Luyer(Visitor):
             raise duplicateVariableError(f"Variable {nombre} is alredady defined.")
         tabla_vars[nombre] = variable
     
-
+    #Funciones para meter operadores a pOper
     def push_mul(self, tree):
         pOper.append('*')
 
@@ -113,6 +113,8 @@ class Luyer(Visitor):
     def push_asg(self, tree):
         pOper.append('=')
 
+
+    #Funciones para meter valores a pilaO y pTipos
     def id(self, tree):
         name = str(tree.children[0].value)
 
@@ -142,6 +144,14 @@ class Luyer(Visitor):
         value = value.replace('"', '')
         pTipos.append('string')
         pilaO.append(value)
+    
+    def true(self, tree):
+        pTipos.append('bool')
+        pilaO.append(True)
+    
+    def false(self, tree):
+        pTipos.append('bool')
+        pilaO.append(False)
 
     def evaluacion1(self, tree):
         #Primera evaluación, checamos si hay multiplicaciones o divisiones pendientes
@@ -162,7 +172,7 @@ class Luyer(Visitor):
                     res = int(res)
                 #Generar Cuádruplo
                 oper = pOper.pop()
-                print(oper, op1, op2, res)
+                cuadruplos.append(Quad(oper, op1, op2, res))
                 pilaO.append(res)
                 pTipos.append(tipoRes)
 
@@ -180,7 +190,7 @@ class Luyer(Visitor):
                     raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
                 res = op1 + op2 if pOper[-1] == '+' else op1 - op2
                 oper = pOper.pop()
-                print(oper, op1, op2, res)
+                cuadruplos.append(Quad(oper, op1, op2, res))
                 pilaO.append(res)
                 pTipos.append(tipoRes)
 
@@ -211,7 +221,7 @@ class Luyer(Visitor):
                     res = op1 <= op2
                 elif oper == '!=':
                     res = op1 != op2
-                print(oper, op1, op2, res)
+                cuadruplos.append(Quad(oper, op1, op2, res))
                 pilaO.append(res)
                 pTipos.append(tipoRes)
 
@@ -229,7 +239,7 @@ class Luyer(Visitor):
                     raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
                 res = op1 and op2 if pOper[-1] == '&&' else op1 or op2
                 oper = pOper.pop()
-                print(oper, op1, op2, res)
+                cuadruplos.append(Quad(oper, op1, op2, res))
                 pilaO.append(res)
                 pTipos.append(tipoRes)
 
@@ -246,6 +256,7 @@ class Luyer(Visitor):
                 if tipoRes == 'ERROR':
                     raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
 
+                cuadruplos.append(Quad(pOper[-1], op2, None, op1))
                 pOper.pop()
                 #Asignar valor
                 directorio_funciones[self.scope]['tabla_vars'][op1]['valor'] = op2
@@ -260,3 +271,43 @@ class Luyer(Visitor):
         #Push nombre y tipo para futura asignación
         pTipos.append(tipo)
         pilaO.append(name)
+
+    def falso_if(self, tree):
+        #Punto neurálgico para meter gotoF del if
+        eval = pilaO.pop()
+        
+        #Generar Cuádruplo
+        cuadruplos.append(Quad("gotoF", bool(eval), None, "---"))
+        pSaltos.append(len(cuadruplos) - 1)
+
+    def push_else(self, tree):
+        #Punto neurálgico para else, metemos goto y llenamos gotoF del if
+        cuadruplos.append(Quad("goto", None, None, "---"))
+        if_falso = pSaltos.pop()
+        pSaltos.append(len(cuadruplos) - 1)
+        cuadruplos[if_falso].res = len(cuadruplos) + 1
+    
+    def end_if(self, tree):
+        #Punto neurálgico para el final del if, sacamos de la pila de saltos y rellenamos
+        end = pSaltos.pop()
+        cuadruplos[end].res = len(cuadruplos) + 1
+
+    def push_while(self, tree):
+        #Punto neurálgico para el inicio del while, metemos cont a la pila de saltos
+        pSaltos.append(len(cuadruplos) + 1)
+
+    def check_while(self, tree):
+        #Punto neurálgico para evaluar la expresión del while
+        eval = pilaO.pop()
+        
+        #Generar Cuádruplo
+        cuadruplos.append(Quad("gotoF", bool(eval), None, "---"))
+        pSaltos.append(len(cuadruplos) - 1)
+
+    def end_while(self, tree):
+        #Punto neurálgico para el final del while, rellenamos check_while y generamos goto al inicio
+        end = pSaltos.pop()
+        ret = pSaltos.pop()
+        cuadruplos.append(Quad("goto", None, None, ret))
+        cuadruplos[end].res = len(cuadruplos) + 1
+

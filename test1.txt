@@ -8,5 +8,9 @@ main {
   g = 50 * 2000;
   h =  10 != 11 || "owo" == "owo";
   g = i + g;
+
+  while(i > g && i > g) {
+    i = 2;
+  }
   ret 0;
 }
