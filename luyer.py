@@ -243,6 +243,13 @@ class Luyer(Visitor):
                 pilaO.append(res)
                 pTipos.append(tipoRes)
 
+    def push_par(self, tree):
+        #Meter fondo falso
+        pOper.append('(')
+    
+    def pop_par(self, tree):
+        #Sacar fondo falso
+        pOper.pop()
 
     def assign_val(self, tree):
         if pOper:
@@ -272,7 +279,7 @@ class Luyer(Visitor):
         pTipos.append(tipo)
         pilaO.append(name)
 
-    def falso_if(self, tree):
+    def check_if(self, tree):
         #Punto neurálgico para meter gotoF del if
         eval = pilaO.pop()
         
@@ -286,7 +293,7 @@ class Luyer(Visitor):
         if_falso = pSaltos.pop()
         pSaltos.append(len(cuadruplos) - 1)
         cuadruplos[if_falso].res = len(cuadruplos) + 1
-    
+
     def end_if(self, tree):
         #Punto neurálgico para el final del if, sacamos de la pila de saltos y rellenamos
         end = pSaltos.pop()

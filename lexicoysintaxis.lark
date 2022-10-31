@@ -50,7 +50,9 @@ termino1: simbolo2 termino |
 simbolo2: "*" -> push_mul | "/" -> push_div
 evaluacion1: 
 
-factor: "(" expresion ")" | var_cte
+factor: "(" push_par expresion ")" pop_par | var_cte
+push_par:
+pop_par:
 
 condicion: "if" "(" expresion ")" check_if bloque condicion1 end_if
 condicion1: push_else "else" bloque | 
