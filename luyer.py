@@ -48,6 +48,11 @@ class Luyer(Visitor):
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         tabla_vars[id_parametro] = parametro
 
+    def globals(self, tree):
+        #Para guardar globales solo cambiamos el scope e iniciamos su parte en el directorio
+        self.scope = 'global'
+        directorio_funciones[self.scope] = {'tipo' : 'main', 'nombre' : 'main', 'tabla_vars': {}}
+
     #Semántica para main
     def main_start(self, tree):
         #Cambiar el scope a main y crear tabla de variables correspondiente
@@ -282,7 +287,7 @@ class Luyer(Visitor):
     def check_if(self, tree):
         #Punto neurálgico para meter gotoF del if
         eval = pilaO.pop()
-        
+        pTipos.pop()
         #Generar Cuádruplo
         cuadruplos.append(Quad("gotoF", bool(eval), None, "---"))
         pSaltos.append(len(cuadruplos) - 1)
@@ -306,7 +311,7 @@ class Luyer(Visitor):
     def check_while(self, tree):
         #Punto neurálgico para evaluar la expresión del while
         eval = pilaO.pop()
-        
+        pTipos.pop()
         #Generar Cuádruplo
         cuadruplos.append(Quad("gotoF", bool(eval), None, "---"))
         pSaltos.append(len(cuadruplos) - 1)

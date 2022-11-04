@@ -1,6 +1,7 @@
 start: program
 
-program: modulos main
+program: globals vars modulos main
+globals:
 
 modulos: modulos1
 modulos1: funcion modulos |
