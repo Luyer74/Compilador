@@ -21,3 +21,4 @@ Proyecto para la clase de Diseño de Compiladores
 - Se agregó la semántica para asignaciones, condiciones y ciclo while.
 - Los valores de las variables ahora son manejados correctamente por el directorio
 - Se agregaron errores comunes como variables duplicadas o valores inválidos
+- Se agregaron variables globales
