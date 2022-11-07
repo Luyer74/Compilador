@@ -1,6 +1,15 @@
 int : uwu;
+int : uwu2 = 20;
 bool : owo;
 
+func int : add (int : x, int : y){
+  int : res;
+  x = 2;
+  y = 3;
+  res = x + y;
+  res = res * 2;
+  ret 0;
+}
 
 main {
   float : f = 0.2 + 3;

@@ -1,12 +1,14 @@
 start: program
 
-program: globals vars modulos main
+program: globals vars gotomain modulos main
 globals:
+gotomain:
 
 modulos: modulos1
 modulos1: funcion modulos |
 
-funcion: "func" tipo1 ":" ID "(" func_vars? ")" bloque_ret | 
+funcion: "func" tipo1 ":" ID "(" func_vars? ")" bloque_ret endfunc| 
+endfunc:
 
 func_vars: tipo ":" ID func_vars1 
 func_vars1: "," func_vars |

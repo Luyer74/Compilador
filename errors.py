@@ -9,3 +9,6 @@ class duplicateVariableError(Exception):
 
 class variableNoValue(Exception):
   pass
+
+class stackOverflow(Exception):
+  pass

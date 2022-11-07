@@ -3,6 +3,7 @@ from lark import Visitor
 from errors import *
 from quad import *
 from cubo import cubo
+from memoria import Memoria
 
 # Directorio de funciones
 directorio_funciones = {}
@@ -10,17 +11,25 @@ directorio_funciones = {}
 #Código Intermedio
 cuadruplos = []
 
+
 #Pilas 
 pilaO = collections.deque()
 pOper = collections.deque()
 pTipos = collections.deque()
 pSaltos = collections.deque()
 
+#Memoria
+memoria = Memoria()
+
 
 class Luyer(Visitor):
     def __init__(self):
         #Variable para guardar el scope actual
         self.scope = ""
+
+    def gotomain(self, tree):
+        cuadruplos.append(Quad("goto", None, None, "----"))
+        pSaltos.append(len(cuadruplos) - 1)
 
     # Semántica para funciones
     def funcion(self, tree):
@@ -29,12 +38,14 @@ class Luyer(Visitor):
         #Obtener el id de la función
         id_funcion = str(tree.children[1])
         self.scope = id_funcion
+        #Obtener punto de inicio de la función
+        start_quad = len(cuadruplos) + 1
         #Checar si la función ya existe
         if id_funcion in directorio_funciones:
             raise functionNameError("Function already exists")
 
         #Meter funcion en directorio
-        directorio_funciones[id_funcion] = {'tipo' : tipo, 'nombre' : id_funcion, 'tabla_vars': {}}
+        directorio_funciones[id_funcion] = {'tipo' : tipo, 'nombre' : id_funcion, 'tabla_vars': {}, 'inicio' : start_quad}
 
     # Semántica para parámetros de funciones
     def func_vars(self, tree):
@@ -42,22 +53,31 @@ class Luyer(Visitor):
         tipo = str(tree.children[0].children[0].children[0])
         #Obtener el nombre
         id_parametro = str(tree.children[1])
+        #Apartar memoria local para el parámetro
+        direccion = memoria.push_local(tipo)
         #Crear parametro
-        parametro = {'nombre' : id_parametro, 'tipo' : tipo}
+        parametro = {'nombre' : id_parametro, 'tipo' : tipo, 'direccion' : direccion}
         # Insertar en tabla de variables correspondiente a su scope
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         tabla_vars[id_parametro] = parametro
 
+    def endfunc(self, tree):
+        cuadruplos.append(Quad("endfunc", None, None, None))
+        memoria.clear_local()
+
     def globals(self, tree):
         #Para guardar globales solo cambiamos el scope e iniciamos su parte en el directorio
         self.scope = 'global'
-        directorio_funciones[self.scope] = {'tipo' : 'main', 'nombre' : 'main', 'tabla_vars': {}}
+        directorio_funciones[self.scope] = {'tipo' : 'global', 'nombre' : 'global', 'tabla_vars': {}}
 
     #Semántica para main
     def main_start(self, tree):
         #Cambiar el scope a main y crear tabla de variables correspondiente
+        inicio_main = pSaltos.pop()
+        cuadruplos[inicio_main].res = len(cuadruplos) + 1
         self.scope = 'main'
-        directorio_funciones[self.scope] = {'tipo' : 'main', 'nombre' : 'main', 'tabla_vars': {}}
+        start_quad = len(cuadruplos) + 1
+        directorio_funciones[self.scope] = {'tipo' : 'main', 'nombre' : 'main', 'tabla_vars': {}, 'inicio' : start_quad}
 
     #Semántica para variables
     def vars(self, tree):
@@ -65,7 +85,14 @@ class Luyer(Visitor):
         #Meter variable a tabla de variables
         tipo = str(tree.children[0].children[0].children[0].children[0])
         nombre = str(tree.children[0].children[1])
-        variable = {'nombre' : nombre, 'tipo' : tipo}
+
+        #Apartar y obtener dirección de memoria
+        if self.scope == 'global':
+            direccion = memoria.push_global(tipo)
+        else:
+            direccion = memoria.push_local(tipo)
+
+        variable = {'nombre' : nombre, 'tipo' : tipo, 'direccion' : direccion}
 
         #Si la asignación se realiza en la declaración, hay que meter el tipo y nombre en las pilas
         if tree.children[0].children[2].children and tree.children[0].children[2].children[0].data.value == 'asg_sign':
