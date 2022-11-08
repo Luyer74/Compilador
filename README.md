@@ -22,3 +22,12 @@ Proyecto para la clase de Diseño de Compiladores
 - Los valores de las variables ahora son manejados correctamente por el directorio
 - Se agregaron errores comunes como variables duplicadas o valores inválidos
 - Se agregaron variables globales
+
+### Avance semana 5
+
+- Se agregó la semántica para funciones
+- Se agregó la tabla de párametros
+- Se creó la clase Memoria mediante varias estructuras
+- Se manejan direcciones de memoria para todas las variables correctamente
+- Se guardan los cuádruplos de inicio de cada función y del main
+- Se inició la implementación de cuádruplos de funciones, return aun sin funcionar
