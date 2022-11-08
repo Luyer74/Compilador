@@ -11,7 +11,6 @@ directorio_funciones = {}
 #Código Intermedio
 cuadruplos = []
 
-
 #Pilas 
 pilaO = collections.deque()
 pOper = collections.deque()
@@ -26,6 +25,8 @@ class Luyer(Visitor):
     def __init__(self):
         #Variable para guardar el scope actual
         self.scope = ""
+        self.par_count = 0
+        self.current_function = ""
 
     def gotomain(self, tree):
         cuadruplos.append(Quad("goto", None, None, "----"))
@@ -45,7 +46,7 @@ class Luyer(Visitor):
             raise functionNameError("Function already exists")
 
         #Meter funcion en directorio
-        directorio_funciones[id_funcion] = {'tipo' : tipo, 'nombre' : id_funcion, 'tabla_vars': {}, 'inicio' : start_quad}
+        directorio_funciones[id_funcion] = {'tipo' : tipo, 'nombre' : id_funcion, 'tabla_vars': {}, 'inicio' : start_quad, 'params': []}
 
     # Semántica para parámetros de funciones
     def func_vars(self, tree):
@@ -55,15 +56,54 @@ class Luyer(Visitor):
         id_parametro = str(tree.children[1])
         #Apartar memoria local para el parámetro
         direccion = memoria.push_local(tipo)
+        #Guardar parametros en su tabla
+        directorio_funciones[self.scope]['params'].append({'tipo' : tipo, 'direccion': direccion, 'valor': 'na'})
         #Crear parametro
         parametro = {'nombre' : id_parametro, 'tipo' : tipo, 'direccion' : direccion}
         # Insertar en tabla de variables correspondiente a su scope
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         tabla_vars[id_parametro] = parametro
 
+    #Final de la funcion
     def endfunc(self, tree):
         cuadruplos.append(Quad("endfunc", None, None, None))
         memoria.clear_local()
+
+    #Semántica para llamadas de funciones
+    def llamada(self, tree):
+        id_funcion = tree.children[0]
+        if id_funcion not in directorio_funciones:
+            raise functionNotFound(f"Function {id_funcion} doesn't exist")
+        #Meter ERA a cuadruplos
+        cuadruplos.append(Quad('era', None, None, id_funcion))
+        self.par_count = 1
+        self.current_function = str(id_funcion)
+
+    #Checar parametros
+    def check_par(self, tree):
+        argumento = pilaO.pop()
+        tipo_argumento = pTipos.pop()
+        param_table = directorio_funciones[self.current_function]['params']
+        #Verificar que no se pase del tamaño de parámetros
+        if self.par_count > len(param_table):
+            raise tooManyParams(f"There are too many arguments for function {self.current_function}")
+        #Verificar tipo de argumento en tabla de parámetros
+        if tipo_argumento != param_table[self.par_count - 1]['tipo']:
+            raise wrongParamType(f"Expected {param_table['tipo']} type argument! Got {tipo_argumento} instead.")
+        cuadruplos.append(Quad('parameter', argumento, self.par_count, None))
+        self.par_count += 1
+
+    #Final de una llamada
+    def end_call(self, tree):
+        #Verificar la cantidad de parámetros
+        param_table = directorio_funciones[self.current_function]['params']
+        if self.par_count < len(param_table):
+            raise missingParams(f'Missing parameters for function {self.current_function}')
+        #Meter cuádruplo gosub
+        cuadruplos.append(Quad('gosub', self.current_function, None, None))
+        #Resetear todo
+        self.current_function = ""
+        self.par_count = 0
 
     def globals(self, tree):
         #Para guardar globales solo cambiamos el scope e iniciamos su parte en el directorio

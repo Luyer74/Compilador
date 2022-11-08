@@ -1,0 +1,8 @@
+func int : add (int : x, int : y){
+  ret x + y;
+}
+
+main {
+  i = add(2, 3);
+  ret 0;
+}

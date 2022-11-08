@@ -12,3 +12,15 @@ class variableNoValue(Exception):
 
 class stackOverflow(Exception):
   pass
+
+class functionNotFound(Exception):
+  pass
+
+class wrongParamType(Exception):
+  pass
+
+class tooManyParams(Exception):
+  pass
+
+class missingParams(Exception):
+  pass

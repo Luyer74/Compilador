@@ -23,10 +23,12 @@ estatuto2: estatuto estatuto1
 
 estatuto: while | condicion | llamada | asignacion
 
-llamada: ID "(" parametros ")" ";"
+llamada: ID "(" parametros ")" end_call
+end_call:
 
-parametros: expresion parametros2
+parametros: expresion check_par parametros2
 parametros2: "," parametros | 
+check_par:
 
 asignacion: ID "=" push_asg expresion assign_val ";"
 
