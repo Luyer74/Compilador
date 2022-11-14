@@ -31,3 +31,11 @@ Proyecto para la clase de Diseño de Compiladores
 - Se manejan direcciones de memoria para todas las variables correctamente
 - Se guardan los cuádruplos de inicio de cada función y del main
 - Se inició la implementación de cuádruplos de funciones, return aun sin funcionar
+
+### Avance semana 6
+
+- Se modificó la sintáxis para el uso de return, funciones void y con tipo
+- Se creó la tabla de constantes
+- Se agregó la tabla de parámetros
+- Los parámetros se verifican, con su tipo y orden
+- Las funciones void y return se manejan correctamente
