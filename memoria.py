@@ -65,56 +65,59 @@ class Memoria():
   def push_temp(self, tipo):
     tempoffset = 8000
     if tipo == 'int':
-      current_size = len(self.memoria_temp['int'])
+      current_size = len(self.memoria_temporal['int'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_temp['int'].append('na')
+      self.memoria_temporal['int'].append('na')
       return current_size + offset + tempoffset
     if tipo == 'float':
-      current_size = len(self.memoria_temp['float'])
+      current_size = len(self.memoria_temporal['float'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_temp['float'].append('na')
+      self.memoria_temporal['float'].append('na')
       return current_size + offset * 2 + tempoffset
     if tipo == 'string':
-      current_size = len(self.memoria_temp['string'])
+      current_size = len(self.memoria_temporal['string'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_temp['string'].append('na')
+      self.memoria_temporal['string'].append('na')
       return current_size + offset * 3 + tempoffset
     if tipo == 'bool':
-      current_size = len(self.memoria_temp['bool'])
+      current_size = len(self.memoria_temporal['bool'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_temp['bool'].append('na')
+      self.memoria_temporal['bool'].append('na')
       return current_size + offset * 4 + tempoffset
 
-  def push_const(self, tipo):
+  def push_const(self, tipo, valor = 'na'):
     constoffset = 12000
     if tipo == 'int':
       current_size = len(self.memoria_constante['int'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_constante['int'].append('na')
+      self.memoria_constante['int'].append(valor)
       return current_size + offset + constoffset
     if tipo == 'float':
       current_size = len(self.memoria_constante['float'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_constante['float'].append('na')
+      self.memoria_constante['float'].append(valor)
       return current_size + offset * 2 + constoffset
     if tipo == 'string':
       current_size = len(self.memoria_constante['string'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_constante['string'].append('na')
+      self.memoria_constante['string'].append(valor)
       return current_size + offset * 3 + constoffset
     if tipo == 'bool':
       current_size = len(self.memoria_constante['bool'])
       if current_size >= offset: 
           raise stackOverflow("Stack memory exceeded!")
-      self.memoria_constante['bool'].append('na')
+      self.memoria_constante['bool'].append(valor)
       return current_size + offset * 4 + constoffset
     
   def clear_local(self):
     self.memoria_local = {'int' : [], 'float': [], 'string': [], 'bool' : []}
+
+  def clear_temp(self):
+    self.memoria_temp = {'int' : [], 'float': [], 'string': [], 'bool' : []}

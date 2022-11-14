@@ -1,8 +1,12 @@
-func int : add (int : x, int : y){
-  ret x + y;
+int : i = 1;
+int: j = 2;
+int: res;
+
+func void : add(int : x, int : y){
+  res = x + y;
 }
 
 main {
-  i = add(2, 3);
-  ret 0;
+  int : res2 = add(i, j);
+
 }

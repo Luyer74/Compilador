@@ -16,6 +16,10 @@ print(directorio_funciones)
 print(pilaO)
 print(pOper)
 print(pTipos)
+print(memoria.memoria_global)
+print(memoria.memoria_constante)
+print(memoria.memoria_local)
+print(memoria.memoria_temporal)
 
 cont = 1
 for cuad in cuadruplos:

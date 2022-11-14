@@ -24,3 +24,9 @@ class tooManyParams(Exception):
 
 class missingParams(Exception):
   pass
+
+class functionTypeError(Exception):
+  pass
+
+class functionVoidError(Exception):
+  pass

@@ -7,7 +7,8 @@ gotomain:
 modulos: modulos1
 modulos1: funcion modulos |
 
-funcion: "func" tipo1 ":" ID "(" func_vars? ")" bloque_ret endfunc| 
+funcion: "func" tipo_func ":" ID "(" func_vars? ")" bloque_ret endfunc| 
+tipo_func: tipo1 | VOID
 endfunc:
 
 func_vars: tipo ":" ID func_vars1 
@@ -16,12 +17,16 @@ func_vars1: "," func_vars |
 main: "main" main_start bloque_ret
 main_start: 
 
-bloque_ret: "{" vars estatuto1 RET expresion ";" "}"
+bloque_ret: "{" vars estatuto1 "}"
 bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
-estatuto: while | condicion | llamada | asignacion
+estatuto: while | condicion | is_void llamada ";" | asignacion | return
+is_void:
+
+return: RET expresion end_return ";"
+end_return:
 
 llamada: ID "(" parametros ")" end_call
 end_call:
