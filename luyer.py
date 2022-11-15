@@ -16,6 +16,7 @@ pilaO = collections.deque()
 pOper = collections.deque()
 pTipos = collections.deque()
 pSaltos = collections.deque()
+pLlamadas = collections.deque() 
 
 #Memoria
 memoria = Memoria()
@@ -125,50 +126,52 @@ class Luyer(Visitor):
             raise functionTypeError(f"Function {id_funcion} is non-void, you must assign it")
         #Meter ERA a cuadruplos
         cuadruplos.append(Quad('era', None, None, id_funcion))
-        self.par_count = 1
-        self.current_function = str(id_funcion)
+        pLlamadas.append({'id': id_funcion, 'par_cont' : 1})
+        self.void_function = False
 
     #Checar parametros
     def check_par(self, tree):
+        current_call = pLlamadas[-1]['id']
+        current_par = pLlamadas[-1]['par_cont']
         argumento = pilaO.pop()
         tipo_argumento = pTipos.pop()
-        param_table = directorio_funciones[self.current_function]['params']
+        param_table = directorio_funciones[current_call]['params']
         #Verificar que no se pase del tamaño de parámetros
-        if self.par_count > len(param_table):
-            raise tooManyParams(f"There are too many arguments for function {self.current_function}")
+        if current_par > len(param_table):
+            raise tooManyParams(f"There are too many arguments for function {current_call}")
         #Verificar tipo de argumento en tabla de parámetros
-        if tipo_argumento != param_table[self.par_count - 1]['tipo']:
-            raise wrongParamType(f"Expected {param_table[self.par_count - 1]['tipo']} type argument! Got {tipo_argumento} instead.")
-        cuadruplos.append(Quad('parameter', argumento, self.par_count, None))
-        self.par_count += 1
+        if tipo_argumento != param_table[current_par - 1]['tipo']:
+            raise wrongParamType(f"Expected {param_table[current_par - 1]['tipo']} type argument! Got {tipo_argumento} instead.")
+        cuadruplos.append(Quad('parameter', argumento, pLlamadas[-1]['par_cont'], None))
+        pLlamadas[-1]['par_cont'] += 1
 
     #Final de una llamada
     def end_call(self, tree):
+        current_call = pLlamadas[-1]['id']
+        current_par = pLlamadas[-1]['par_cont']
+        #Resetear
+        pLlamadas.pop()
         #Verificar la cantidad de parámetros
-        param_table = directorio_funciones[self.current_function]['params']
-        if self.par_count <= len(param_table):
-            raise missingParams(f'Missing parameters for function {self.current_function}')
+        param_table = directorio_funciones[current_call]['params']
+        if current_par <= len(param_table):
+            raise missingParams(f'Missing parameters for function {current_call}')
         #Meter cuádruplo gosub
-        cuadruplos.append(Quad('gosub', self.current_function, None, None))
+        cuadruplos.append(Quad('gosub', current_call, None, None))
+        #Obtener el tipo de resultado
+        tipo = directorio_funciones[current_call]['tipo']
         #Si la función no es void, hay que aplicar el parche
-        if not self.void_function:
-            #Obtener el tipo de resultado
-            tipo = directorio_funciones[self.current_function]['tipo']
-            if tipo == 'void':
-                raise functionVoidError(f"Function {self.current_function} doesn't return anything!")
+        if tipo != 'void':
             #Parche guadalupano, meter en memoria temporal el resultado
             temp = memoria.push_temp(tipo)
             #Meter en pilas
             pilaO.append(temp)
             pTipos.append(tipo)
             #Obtener dirección global, ahi estará guardado el resultado
-            dir_global = directorio_funciones['global']['tabla_vars'][self.current_function]['direccion']
+            dir_global = directorio_funciones['global']['tabla_vars'][current_call]['direccion']
             #Cuadruplo para asignación de ese temporal
             cuadruplos.append(Quad('=', dir_global, None, temp))
-        #Resetear todo
-        self.current_function = None
-        self.par_count = 0
-        self.void_function = False
+        elif tipo == 'void' and pLlamadas:
+            raise functionVoidError(f"Function {current_call} doesn't return anything!")
 
     def globals(self, tree):
         #Para guardar globales solo cambiamos el scope e iniciamos su parte en el directorio

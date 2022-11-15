@@ -28,7 +28,7 @@ is_void:
 return: RET expresion end_return ";"
 end_return:
 
-llamada: ID "(" parametros ")" end_call
+llamada: ID "(" parametros? ")" end_call
 end_call:
 
 parametros: expresion check_par parametros2

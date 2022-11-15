@@ -39,3 +39,4 @@ Proyecto para la clase de Diseño de Compiladores
 - Se agregó la tabla de parámetros
 - Los parámetros se verifican, con su tipo y orden
 - Las funciones void y return se manejan correctamente
+- Se manejan llamadas dentro de llamadas con una pila de llamadas

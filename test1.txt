@@ -11,14 +11,18 @@ func int : add (int : x, int : y){
   ret 0;
 }
 
+func void : awa (int : x){
+  int : z;
+}
+
 main {
   float : f = 0.2 + 3;
   int : i;
   bool : h;
   int : g;
-
+  awa(add(2,3));
   i = 2 + 1 * 3;
-  i = add(2,3);
+  i = add(add(2+1,add(2,1)),3*2+(2-5));
   f = (2 + 1) / 2;
   g = 50 * 2000;
   h =  10 != 11 || "owo" == "owo";
