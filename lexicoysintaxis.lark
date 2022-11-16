@@ -75,8 +75,13 @@ push_while:
 check_while:
 end_while:
 
-vars: vars1?
-vars1: tipo ":" ID vars2? ";" vars
+vars: vars1*
+vars1: tipo ":" ID vars2? ";" -> variable 
+     | tipo ":" ID "[" dims "]" set_nodes ";" -> variable_arr
+dims: var_cte create_node dims1
+dims1: "," dims |
+create_node:
+set_nodes:
 vars2: asg_sign push_asg expresion assign_val
 asg_sign: "="
 push_asg:

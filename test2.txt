@@ -1,12 +1,6 @@
-int : i = 1;
-int: j = 2;
-int: res;
-
-func void : add(int : x, int : y){
-  res = x + y;
-}
+int : uwu;
+int : uwu2[5,8,9];
 
 main {
-  int : res2 = add(i, j);
-
+  int : a;
 }

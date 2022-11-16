@@ -30,8 +30,8 @@ class Luyer(Visitor):
         #Variable para guardar el scope actual
         self.scope = ""
         self.par_count = 0
-        self.current_function = ""
         self.void_function = False
+        self.currArr = ""
 
     def gotomain(self, tree):
         cuadruplos.append(Quad("goto", None, None, "----"))
@@ -63,8 +63,6 @@ class Luyer(Visitor):
             if id_funcion == 'global':
                 raise functionNameError("Function can't be named global")
             raise functionNameError("Function already exists")
-        #Asignar nombre de función a variable para al final meter el tamaño su memoria
-        self.current_function = id_funcion
         #Meter funcion en directorio
         directorio_funciones[id_funcion] = {'tipo' : tipo, 'nombre' : id_funcion, 'tabla_vars': {}, 'inicio' : start_quad, 'params': []}
 
@@ -92,8 +90,8 @@ class Luyer(Visitor):
 
     #Punto para el return
     def end_return(self, tree):
-        if directorio_funciones[self.current_function]['tipo'] == 'void':
-            raise functionVoidError(f"Function {self.current_function} is void. It can't return anything")
+        if directorio_funciones[self.scope]['tipo'] == 'void':
+            raise functionVoidError(f"Function {self.scope} is void. It can't return anything")
         res = pilaO.pop()
         #Agregar cuadruplo de return
         cuadruplos.append(Quad('return', None, None, res))
@@ -101,7 +99,7 @@ class Luyer(Visitor):
     #Final de la función
     def endfunc(self, tree):
         #Agregar tamaño de memoria al directorio
-        directorio_funciones[self.current_function]['memoria'] = {
+        directorio_funciones[self.scope]['memoria'] = {
             'local' : len(memoria.memoria_local),
             'temporal' : len(memoria.memoria_temporal)
         }
@@ -109,7 +107,7 @@ class Luyer(Visitor):
         #Limpiar memoria
         memoria.clear_local()
         memoria.clear_temp()
-        self.current_function = None
+        self.scope = None
 
     #Punto para funciones void en estatutos
     def is_void(self, tree):
@@ -188,11 +186,11 @@ class Luyer(Visitor):
         directorio_funciones[self.scope] = {'tipo' : 'main', 'nombre' : 'main', 'tabla_vars': {}, 'inicio' : start_quad}
 
     #Semántica para variables
-    def vars(self, tree):
+    def variable(self, tree):
         if tree.children == []: return
         #Meter variable a tabla de variables
-        tipo = str(tree.children[0].children[0].children[0].children[0])
-        nombre = str(tree.children[0].children[1])
+        tipo = str(tree.children[0].children[0].children[0])
+        nombre = str(tree.children[1])
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         #checar doble declaración
         if nombre in tabla_vars:
@@ -206,7 +204,7 @@ class Luyer(Visitor):
             direccion = memoria.push_local(tipo)
         variable = {'nombre' : nombre, 'tipo' : tipo, 'direccion' : direccion}
         #Si la asignación se realiza en la declaración, hay que meter el tipo y direccion en las pilas
-        if tree.children[0].children[2].children and tree.children[0].children[2].children[0].data.value == 'asg_sign':
+        if len(tree.children) > 2 :
             pilaO.append(direccion)
             pTipos.append(tipo)
         tabla_vars[nombre] = variable
@@ -469,3 +467,50 @@ class Luyer(Visitor):
         cuadruplos.append(Quad("goto", None, None, ret))
         cuadruplos[end].res = len(cuadruplos) + 1
 
+    #Puntos neurálgicos para arreglos
+    def variable_arr(self, tree):
+        if tree.children == []: return
+        #Meter variable a tabla de variables
+        tipo = str(tree.children[0].children[0].children[0])
+        nombre = str(tree.children[1])
+        tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        #checar doble declaración
+        if nombre in tabla_vars:
+            raise duplicateVariableError(f"Variable {nombre} is already defined")
+        elif nombre in directorio_funciones['global']['tabla_vars']:
+            raise duplicateVariableError(f"Variable {nombre} is already defined globally")
+        #Apartar y obtener dirección de memoria
+        if self.scope == 'global':
+            direccion = memoria.push_global(tipo)
+        else:
+            direccion = memoria.push_local(tipo)
+        variable = {'nombre' : nombre, 'tipo' : tipo, 'direccion' : direccion, 'arr': True, 'dims' : [], 'size' : 1}
+        tabla_vars[nombre] = variable
+        self.currArr = nombre
+    
+    def create_node(self, tree):
+        #Obtener lista de dimensiones
+        dim_list = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['dims']
+        R = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
+        #El tamaño del nodo estará en la pila como dirección constante
+        dir_const = pilaO.pop()
+        print(dir_const)
+        #Si la dirección no es temporal entera hay un error en el índice
+        if dir_const < 13000 or dir_const > 13999:
+            raise indexError("Array indexes can only be initialized with integers")
+        rango = memoria.memoria_constante['int'][dir_const-13000]
+        R *= rango + 1
+        #Crear "nodo" de dimensión
+        dim_list.append([rango, None])
+        directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size'] = R
+
+    def set_nodes(self, tree):
+        #Setear valores de Mn en los nodos de dimensiones
+        dim = 0
+        dim_list = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['dims']
+        R = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
+        while dim < len(dim_list):
+            m_dim = int(R / (dim_list[dim][0] + 1))
+            dim_list[dim][1] = m_dim
+            R = m_dim
+            dim += 1

@@ -30,3 +30,6 @@ class functionTypeError(Exception):
 
 class functionVoidError(Exception):
   pass
+
+class indexError(Exception):
+  pass
