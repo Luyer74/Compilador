@@ -46,3 +46,4 @@ Proyecto para la clase de Diseño de Compiladores
 - Se maneja la declaración de arreglos de n dimensiones utilizando indexado de tipo C
 - Se maneja el acceso de arreglos y su uso en operaciones
 - La memoria se aparta correctamente para los arreglos
+- Se maneja la asignación en arreglos
