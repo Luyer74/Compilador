@@ -16,7 +16,8 @@ pilaO = collections.deque()
 pOper = collections.deque()
 pTipos = collections.deque()
 pSaltos = collections.deque()
-pLlamadas = collections.deque() 
+pLlamadas = collections.deque()
+pDim = collections.deque()
 
 #Memoria
 memoria = Memoria()
@@ -90,9 +91,14 @@ class Luyer(Visitor):
 
     #Punto para el return
     def end_return(self, tree):
-        if directorio_funciones[self.scope]['tipo'] == 'void':
+        function_type = directorio_funciones[self.scope]['tipo']
+        if function_type == 'void':
             raise functionVoidError(f"Function {self.scope} is void. It can't return anything")
         res = pilaO.pop()
+        tipo_ret = pTipos.pop()
+        #Si el tipo de retorno y el tipo de función no coinciden, error
+        if tipo_ret != function_type:
+            raise returnTypeError(f"Function {self.scope} expects {function_type}, returns {tipo_ret} instead")
         #Agregar cuadruplo de return
         cuadruplos.append(Quad('return', None, None, res))
 
@@ -125,6 +131,7 @@ class Luyer(Visitor):
         #Meter ERA a cuadruplos
         cuadruplos.append(Quad('era', None, None, id_funcion))
         pLlamadas.append({'id': id_funcion, 'par_cont' : 1})
+        pOper.append('(')
         self.void_function = False
 
     #Checar parametros
@@ -170,6 +177,7 @@ class Luyer(Visitor):
             cuadruplos.append(Quad('=', dir_global, None, temp))
         elif tipo == 'void' and pLlamadas:
             raise functionVoidError(f"Function {current_call} doesn't return anything!")
+        pOper.pop()
 
     def globals(self, tree):
         #Para guardar globales solo cambiamos el scope e iniciamos su parte en el directorio
@@ -494,11 +502,11 @@ class Luyer(Visitor):
         R = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
         #El tamaño del nodo estará en la pila como dirección constante
         dir_const = pilaO.pop()
-        print(dir_const)
+        pTipos.pop()
         #Si la dirección no es temporal entera hay un error en el índice
-        if dir_const < 13000 or dir_const > 13999:
+        if dir_const < 14000 or dir_const > 14999:
             raise indexError("Array indexes can only be initialized with integers")
-        rango = memoria.memoria_constante['int'][dir_const-13000]
+        rango = memoria.memoria_constante['int'][dir_const-14000]
         R *= rango + 1
         #Crear "nodo" de dimensión
         dim_list.append([rango, None])
@@ -514,3 +522,107 @@ class Luyer(Visitor):
             dim_list[dim][1] = m_dim
             R = m_dim
             dim += 1
+        #Apartar memoria
+        size = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
+        tipo = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['tipo']
+        while size > 1:
+            if self.scope != 'global':
+                memoria.push_local(tipo)
+            else:
+                memoria.push_global(tipo)
+            size -= 1
+        #Resetear
+        self.currArr = None
+
+    def array_access(self, tree):
+        #Obtener ID y tipo
+        name = str(tree.children[0].value)
+        tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        #Verificar que exista en tablas de variables
+        if name not in tabla_vars:
+            if name in directorio_funciones['global']['tabla_vars']:
+                tabla_vars = directorio_funciones['global']['tabla_vars']
+            else:
+                raise variableNotFoundError(f"Variable {name} is not defined")
+        tipo = tabla_vars[name]['tipo']
+        #Verificar que sea variable con dimensiones
+        if 'arr' not in tabla_vars[name]:
+            raise notArrayType(f"Variable {name} is not array-type")
+        #Definir dim
+        dim = 1
+        pDim.append([name, dim, tipo])
+        #Pushear fondo falso
+        pOper.append('(')
+
+    def check_dim(self, tree):
+        #Obtener nodo
+        name = pDim[-1][0]
+        dim = pDim[-1][1]
+        #Checar si es global o local
+        if name in directorio_funciones[self.scope]['tabla_vars']:
+            tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        elif name in directorio_funciones['global']['tabla_vars']:
+            tabla_vars = directorio_funciones['global']['tabla_vars']
+        nodos = tabla_vars[name]['dims']
+        limS = nodos[dim - 1][0]
+        index = pilaO[-1]
+        #Verificar límites
+        cuadruplos.append(Quad("ver", index, 0, limS))
+        #Checar si hay más nodos
+        if len(nodos) > dim:
+            aux = pilaO.pop()
+            tipo_nodo = pTipos.pop()
+            if tipo_nodo != 'int':
+                raise indexError("Indexes must be integers")
+            m_dim = nodos[dim - 1][1]
+            #Multiplicar por m en cuádruplo
+            temp_1 = memoria.push_temp('int')
+            cuadruplos.append(Quad("*", aux, m_dim, temp_1))
+            pilaO.append(temp_1)
+            pTipos.append('int')
+        #Cuadruplo de suma
+        if dim > 1:
+            aux2 = pilaO.pop()
+            aux2_tipo = pTipos.pop()
+            aux1 = pilaO.pop()
+            aux1_tipo = pTipos.pop()
+            if aux2_tipo != 'int' or aux1_tipo != 'int':
+                raise indexError("Indexes must be integers")
+            temp_2 = memoria.push_temp('int')
+            cuadruplos.append(Quad("+", aux1, aux2, temp_2))
+            pilaO.append(temp_2)
+            pTipos.append('int')
+
+        #Actualizar dim
+        pDim[-1][1] += 1
+
+    def end_arr(self, tree):
+        #Aux contiene nuestro indice
+        aux = pilaO.pop()
+        tipo_i = pTipos.pop()
+        if tipo_i != 'int':
+            raise indexError("Indexes must be integers")
+        #Checamos que coincidan las dims
+        name = pDim[-1][0]
+        dim = pDim[-1][1]
+        tipo = pDim[-1][2]
+        #Checar si es global o local
+        if name in directorio_funciones[self.scope]['tabla_vars']:
+            tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        elif name in directorio_funciones['global']['tabla_vars']:
+            tabla_vars = directorio_funciones['global']['tabla_vars']
+        dim_size = len(tabla_vars[name]['dims'])
+        #Error si no coinciden las dimensiones
+        if dim_size != dim - 1:
+            raise indexError(f"Dimensions for variable {name} do not match")
+        #Obtenemos dirección base
+        dir_base = tabla_vars[name]['direccion']
+        #Creamos dirección temporal pointer
+        temp_p = memoria.push_temp('pointer')
+        #Generamos cuádruplo de suma de dirB
+        cuadruplos.append(Quad("+", aux, dir_base, temp_p))
+        pilaO.append(temp_p)
+        pTipos.append(tipo)
+        pOper.pop()
+        pDim.pop()
+    

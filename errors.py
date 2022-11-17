@@ -33,3 +33,9 @@ class functionVoidError(Exception):
 
 class indexError(Exception):
   pass
+
+class notArrayType(Exception):
+  pass
+
+class returnTypeError(Exception):
+  pass

@@ -40,3 +40,9 @@ Proyecto para la clase de Diseño de Compiladores
 - Los parámetros se verifican, con su tipo y orden
 - Las funciones void y return se manejan correctamente
 - Se manejan llamadas dentro de llamadas con una pila de llamadas
+
+### Avance semana 7
+
+- Se maneja la declaración de arreglos de n dimensiones utilizando indexado de tipo C
+- Se maneja el acceso de arreglos y su uso en operaciones
+- La memoria se aparta correctamente para los arreglos

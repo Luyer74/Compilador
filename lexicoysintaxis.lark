@@ -87,6 +87,12 @@ asg_sign: "="
 push_asg:
 assign_val:
 
+array_access: ID "[" dims2 "]" end_arr
+dims2: expresion check_dim dims3
+dims3: "," dims2 |
+check_dim:
+end_arr:
+
 var_cte: SIGNED_FLOAT -> flo
 | SIGNED_INT -> integ
 | llamada -> call
@@ -94,6 +100,7 @@ var_cte: SIGNED_FLOAT -> flo
 | FALSE  -> false
 | ID -> id
 | ESCAPED_STRING -> string
+| array_access
 
 tipo: tipo1 tipo2
 tipo1: INT | FLOAT | STRING | BOOL

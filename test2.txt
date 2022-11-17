@@ -1,6 +1,11 @@
-int : uwu;
-int : uwu2[5,8,9];
+func string: dame (int : x){
+  string : palabra[3];
+  int : b = 3;
+  ret palabra[2];
+}
 
 main {
-  int : a;
+  string : a;
+  string : b[5];
+  a =  "uwu" + dame(3) + b[2];
 }

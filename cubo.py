@@ -43,7 +43,7 @@ cubo = {
     'string' : {
       'int' : 'ERROR',
       'float' : 'ERROR',
-      'string' : 'ERRPR',
+      'string' : 'ERROR',
       'bool' : 'ERROR'
     },
     'bool' : {

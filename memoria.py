@@ -6,7 +6,7 @@ class Memoria():
   def __init__(self):
     self.memoria_global = {'int' : [], 'float': [], 'string': [], 'bool' : []}
     self.memoria_local = {'int' : [], 'float': [], 'string': [], 'bool' : []}
-    self.memoria_temporal = {'int' : [], 'float': [], 'string': [], 'bool' : []}
+    self.memoria_temporal = {'int' : [], 'float': [], 'string': [], 'bool' : [], 'pointer' : []}
     self.memoria_constante = {'int' : [], 'float': [], 'string': [], 'bool' : []}
 
   def push_global(self, tipo):
@@ -62,7 +62,7 @@ class Memoria():
       self.memoria_local['bool'].append('na')
       return current_size + offset * 4 + localoffset
 
-  def push_temp(self, tipo):
+  def push_temp(self, tipo, valor = 'na'):
     tempoffset = 8000
     if tipo == 'int':
       current_size = len(self.memoria_temporal['int'])
@@ -88,9 +88,15 @@ class Memoria():
           raise stackOverflow("Stack memory exceeded!")
       self.memoria_temporal['bool'].append('na')
       return current_size + offset * 4 + tempoffset
+    if tipo == 'pointer':
+      current_size = len(self.memoria_temporal['pointer'])
+      if current_size >= offset: 
+          raise stackOverflow("Stack memory exceeded!")
+      self.memoria_temporal['pointer'].append(valor)
+      return current_size + offset * 5 + tempoffset
 
   def push_const(self, tipo, valor = 'na'):
-    constoffset = 12000
+    constoffset = 13000
     if tipo == 'int':
       current_size = len(self.memoria_constante['int'])
       if current_size >= offset: 
@@ -120,4 +126,4 @@ class Memoria():
     self.memoria_local = {'int' : [], 'float': [], 'string': [], 'bool' : []}
 
   def clear_temp(self):
-    self.memoria_temp = {'int' : [], 'float': [], 'string': [], 'bool' : []}
+    self.memoria_temp = {'int' : [], 'float': [], 'string': [], 'bool' : [], 'pointer' : []}
