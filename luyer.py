@@ -414,7 +414,6 @@ class Luyer(Visitor):
                 tipoRes = cubo[pOper[-1]][tipoOp1][tipoOp2]
                 if tipoRes == 'ERROR':
                     raise TypeError(f"Invalid operation between {tipoOp1} and {tipoOp2}")
-
                 cuadruplos.append(Quad("=", op2, None, op1))
                 pOper.pop()
 

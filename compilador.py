@@ -3,7 +3,7 @@ from luyer import *
 l = Lark(open("lexicoysintaxis.lark", "r").read())
 
 try:
-  input = open("test1.txt", "r").read()
+  input = open("test2.txt", "r").read()
   arbol = l.parse(input)
   print("Correct Input")
 except EOFError:

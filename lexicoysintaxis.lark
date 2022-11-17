@@ -22,7 +22,7 @@ bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
-estatuto: while | condicion | is_void llamada ";" | asignacion | return
+estatuto: while | condicion | is_void llamada ";" | asignacion | asignacion_arr | return
 is_void:
 
 return: RET expresion end_return ";"
@@ -36,6 +36,7 @@ parametros2: "," parametros |
 check_par:
 
 asignacion: ID "=" push_asg expresion assign_val ";"
+asignacion_arr : array_access "=" push_asg expresion assign_val ";"
 
 expresion: not expresion1
 not: "!" |
