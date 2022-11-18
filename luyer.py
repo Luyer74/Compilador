@@ -37,6 +37,12 @@ class Luyer(Visitor):
     def gotomain(self, tree):
         cuadruplos.append(Quad("goto", None, None, "----"))
         pSaltos.append(len(cuadruplos) - 1)
+    
+    #Semántica para escritura
+    def escritura(self, tree):
+        res = pilaO.pop()
+        pTipos.pop()
+        cuadruplos.append(Quad("print", None, None, res))
 
     # Semántica para funciones
     def funcion(self, tree):
@@ -624,4 +630,7 @@ class Luyer(Visitor):
         pTipos.append(tipo)
         pOper.pop()
         pDim.pop()
+    
+    def endprogram(self,tree):
+        cuadruplos.append(Quad("endprogram", None, None, None))
     

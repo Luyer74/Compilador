@@ -47,3 +47,8 @@ Proyecto para la clase de Diseño de Compiladores
 - Se maneja el acceso de arreglos y su uso en operaciones
 - La memoria se aparta correctamente para los arreglos
 - Se maneja la asignación en arreglos
+- Se creó la máquina virtual con una clase
+- La máquina virtual lee cuádruplos en el orden correcto
+- La máquina virtual realiza operaciones aritméticas y de asignación
+- La clase memoria maneja asignaciones de valores correctamente
+- La máquina virtual ejecuta estatutos condicionales y ciclos

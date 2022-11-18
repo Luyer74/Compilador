@@ -1,4 +1,3 @@
-int : uwu;
 int : uwu2 = 20;
 bool : owo;
 
@@ -17,12 +16,13 @@ func void : awa (int : x){
 
 main {
   float : f = 0.2 + 3;
+  int : z[5, 10];
   int : i;
   bool : h;
   int : g;
   awa(add(2,3));
   i = -2 + 1 * 3;
-  i = add(add(2+1,add(2,1)),3*2+(2-5));
+  i = add(add(2+1,add(2,1)),3*2+(2-5) - z[3, add(7, z[1,5])]);
   f = (2 + 1) / 2;
   g = 50 * 2000;
   h =  10 != 11 || "owo" == "owo";

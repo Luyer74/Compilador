@@ -1,8 +1,9 @@
 start: program
 
-program: globals vars gotomain modulos main
+program: globals vars gotomain modulos main endprogram
 globals:
 gotomain:
+endprogram:
 
 modulos: modulos1
 modulos1: funcion modulos |
@@ -22,7 +23,12 @@ bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
-estatuto: while | condicion | is_void llamada ";" | asignacion | asignacion_arr | return
+estatuto: while | condicion | out | asignacion | asignacion_arr | return | llamada_void
+
+llamada_void: is_void llamada ";"
+out: PRINT "(" expresion escritura out1* ")" ";"
+out1: "," expresion escritura
+escritura:
 is_void:
 
 return: RET expresion end_return ";"
@@ -116,6 +122,7 @@ TRUE: "true"
 FALSE: "false"
 RET: "ret"
 VOID: "void"
+PRINT: "out"
 
 
 %import common.SIGNED_FLOAT
