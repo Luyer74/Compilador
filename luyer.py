@@ -23,7 +23,7 @@ pDim = collections.deque()
 memoria = Memoria()
 
 #Constantes
-dirConsts = {}
+dir_consts = {}
 
 
 class Luyer(Visitor):
@@ -89,7 +89,7 @@ class Luyer(Visitor):
         #Apartar memoria local para el parámetro
         direccion = memoria.push_local(tipo)
         #Guardar parametros en su tabla
-        directorio_funciones[self.scope]['params'].append({'tipo' : tipo, 'direccion': direccion, 'valor': 'na'})
+        directorio_funciones[self.scope]['params'].append({'tipo' : tipo, 'direccion': direccion})
         #Crear parametro
         parametro = {'nombre' : id_parametro, 'tipo' : tipo, 'direccion' : direccion}
         # Insertar en tabla de variables correspondiente a su scope
@@ -106,14 +106,14 @@ class Luyer(Visitor):
         if tipo_ret != function_type:
             raise returnTypeError(f"Function {self.scope} expects {function_type}, returns {tipo_ret} instead")
         #Agregar cuadruplo de return
-        cuadruplos.append(Quad('return', None, None, res))
+        cuadruplos.append(Quad("return", self.scope, None, res))
 
     #Final de la función
     def endfunc(self, tree):
         #Agregar tamaño de memoria al directorio
         directorio_funciones[self.scope]['memoria'] = {
-            'local' : len(memoria.memoria_local),
-            'temporal' : len(memoria.memoria_temporal)
+            'local' : [len(memoria.memoria_local[name]) for name in memoria.memoria_local],
+            'temporal' : [len(memoria.memoria_temporal[name]) for name in memoria.memoria_temporal]
         }
         cuadruplos.append(Quad("endfunc", None, None, None))
         #Limpiar memoria
@@ -153,7 +153,7 @@ class Luyer(Visitor):
         #Verificar tipo de argumento en tabla de parámetros
         if tipo_argumento != param_table[current_par - 1]['tipo']:
             raise wrongParamType(f"Expected {param_table[current_par - 1]['tipo']} type argument! Got {tipo_argumento} instead.")
-        cuadruplos.append(Quad('parameter', argumento, pLlamadas[-1]['par_cont'], None))
+        cuadruplos.append(Quad("parameter", argumento, pLlamadas[-1]['par_cont'], current_call))
         pLlamadas[-1]['par_cont'] += 1
 
     #Final de una llamada
@@ -167,7 +167,7 @@ class Luyer(Visitor):
         if current_par <= len(param_table):
             raise missingParams(f'Missing parameters for function {current_call}')
         #Meter cuádruplo gosub
-        cuadruplos.append(Quad('gosub', current_call, None, None))
+        cuadruplos.append(Quad('gosub', None, None, current_call))
         #Obtener el tipo de resultado
         tipo = directorio_funciones[current_call]['tipo']
         #Si la función no es void, hay que aplicar el parche
@@ -280,50 +280,50 @@ class Luyer(Visitor):
 
     def flo(self, tree):
         value = float(tree.children[0].value)
-        if value in dirConsts:
-            direccion = dirConsts[value]
+        if value in dir_consts:
+            direccion = dir_consts[value]
         else:
             direccion = memoria.push_const('float', value)
-            dirConsts[value] = direccion
+            dir_consts[value] = direccion
         pTipos.append('float')
         pilaO.append(direccion)
 
     def integ(self, tree):
         value = int(tree.children[0].value)
-        if value in dirConsts:
-            direccion = dirConsts[value]
+        if value in dir_consts:
+            direccion = dir_consts[value]
         else:
             direccion = memoria.push_const('int', value)
-            dirConsts[value] = direccion
+            dir_consts[value] = direccion
         pTipos.append('int')
         pilaO.append(direccion)
 
     def string(self, tree):
         value = str(tree.children[0].value)
         value = value.replace('"', '')
-        if value in dirConsts:
-            direccion = dirConsts[value]
+        if value in dir_consts:
+            direccion = dir_consts[value]
         else:
             direccion = memoria.push_const('string', value)
-            dirConsts[value] = direccion
+            dir_consts[value] = direccion
         pTipos.append('string')
         pilaO.append(direccion)
     
     def true(self, tree):
-        if True in dirConsts:
-            direccion = dirConsts[True]
+        if True in dir_consts:
+            direccion = dir_consts[True]
         else:
             direccion = memoria.push_const('bool', True)
-            dirConsts[True] = direccion
+            dir_consts[True] = direccion
         pTipos.append('bool')
         pilaO.append(direccion)
     
     def false(self, tree):
-        if False in dirConsts:
-            direccion = dirConsts[False]
+        if False in dir_consts:
+            direccion = dir_consts[False]
         else:
             direccion = memoria.push_const('bool', False)
-            dirConsts[False] = direccion
+            dir_consts[False] = direccion
         pTipos.append('bool')
         pilaO.append(direccion)
 

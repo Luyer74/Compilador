@@ -157,6 +157,58 @@ cubo = {
       'bool' : 'ERROR'
     }
   }, 
+  '<=' : { 
+    'int' : {
+      'int' : 'bool',
+      'float' : 'bool',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'float' : {
+      'int' : 'bool',
+      'float' : 'bool',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'string' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'bool',
+      'bool' : 'ERROR'
+    },
+    'bool' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    }
+  }, 
+  '>=' : { 
+    'int' : {
+      'int' : 'bool',
+      'float' : 'bool',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'float' : {
+      'int' : 'bool',
+      'float' : 'bool',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    },
+    'string' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'bool',
+      'bool' : 'ERROR'
+    },
+    'bool' : {
+      'int' : 'ERROR',
+      'float' : 'ERROR',
+      'string' : 'ERROR',
+      'bool' : 'ERROR'
+    }
+  }, 
   '!=' : { 
     'int' : {
       'int' : 'bool',

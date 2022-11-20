@@ -52,3 +52,5 @@ Proyecto para la clase de Diseño de Compiladores
 - La máquina virtual realiza operaciones aritméticas y de asignación
 - La clase memoria maneja asignaciones de valores correctamente
 - La máquina virtual ejecuta estatutos condicionales y ciclos
+- La máquina virtual ejecuta funciones correctamente
+- La máquina virtual maneja la recursividad correctamente con una pila de IP

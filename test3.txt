@@ -1,7 +1,17 @@
+func int : one(int : i){
+  ret 1;
+}
+
+func int : sum(int : x, int : y){
+  int : res;
+  ret x + y + one(x);
+}
+
 main {
   int : i = 0;
   while(i < 1000){
+    i = sum(i, 1);
     out(i);
-    i = i + 1;
   }
+  out(i);
 }
