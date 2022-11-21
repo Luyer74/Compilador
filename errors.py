@@ -39,3 +39,6 @@ class notArrayType(Exception):
 
 class returnTypeError(Exception):
   pass
+
+class indexOutOfBonds(Exception):
+  pass

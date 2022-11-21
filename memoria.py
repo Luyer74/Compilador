@@ -126,7 +126,7 @@ class Memoria():
     self.memoria_local = {'int' : [], 'float': [], 'string': [], 'bool' : []}
 
   def clear_temp(self):
-    self.memoria_temp = {'int' : [], 'float': [], 'string': [], 'bool' : [], 'pointer' : []}
+    self.memoria_temporal = {'int' : [], 'float': [], 'string': [], 'bool' : [], 'pointer' : []}
 
   def get_value(self, address):
     #Obtener valores globales
@@ -160,7 +160,7 @@ class Memoria():
       elif address <= 12999:
         return self.memoria_temporal['bool'][address - 12000]
       elif address <= 13999:
-        return self.memoria_temporal['bool'][address - 13000]
+        return self.memoria_temporal['pointer'][address - 13000]
     #Obtener valores constantes
     elif address >= 14000 and address <= 17999:
       if address <= 14999:
@@ -204,7 +204,7 @@ class Memoria():
       elif address <= 12999:
         self.memoria_temporal['bool'][address - 12000] = value
       elif address <= 13999:
-        self.memoria_temporal['bool'][address - 13000] = value
+        self.memoria_temporal['pointer'][address - 13000] = value
     #Asignar valores constantes
     elif address >= 14000 and address <= 17999:
       if address <= 14999:

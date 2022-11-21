@@ -512,7 +512,7 @@ class Luyer(Visitor):
         if dir_const < 14000 or dir_const > 14999:
             raise indexError("Array indexes can only be initialized with integers")
         rango = memoria.memoria_constante['int'][dir_const-14000]
-        R *= rango + 1
+        R *= rango
         #Crear "nodo" de dimensión
         dim_list.append([rango, None])
         directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size'] = R
@@ -523,19 +523,21 @@ class Luyer(Visitor):
         dim_list = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['dims']
         R = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
         while dim < len(dim_list):
-            m_dim = int(R / (dim_list[dim][0] + 1))
+            m_dim = int(R / (dim_list[dim][0]))
             dim_list[dim][1] = m_dim
             R = m_dim
             dim += 1
         #Apartar memoria
         size = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['size']
         tipo = directorio_funciones[self.scope]['tabla_vars'][self.currArr]['tipo']
-        while size > 1:
+        cont = 1
+        while cont < size:
             if self.scope != 'global':
                 memoria.push_local(tipo)
+                cont += 1
             else:
                 memoria.push_global(tipo)
-            size -= 1
+                cont += 1
         #Resetear
         self.currArr = None
 

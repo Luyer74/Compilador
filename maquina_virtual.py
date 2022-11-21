@@ -1,5 +1,6 @@
 from luyer import directorio_funciones, memoria as memoria_main
 from memoria import Memoria
+from errors import *
 
 class VM():
   def __init__(self, quads):
@@ -11,28 +12,32 @@ class VM():
   def execute(self):
     #Iniciar con la memoria del main
     self.call_stack.append(memoria_main)
-    # print(self.call_stack[-1].memoria_global)
-    # for i, quad in enumerate(self.quads):
-    #   print(i + 1)
-    #   quad.print_quad()
+    print(self.call_stack[-1].memoria_global)
+    print(self.call_stack[-1].memoria_local)
+    print(self.call_stack[-1].memoria_temporal)
+    print(self.call_stack[-1].memoria_constante)
+    for i, quad in enumerate(self.quads):
+      print(i + 1)
+      quad.print_quad()
     #Comenzamos ejecución de cuádruplos
     while(self.quads[self.ip_stack[-1] - 1].op != "endprogram"):
       self.execute_quad(self.quads[self.ip_stack[-1] - 1])
-    # print("end")
-    # print(self.call_stack[-1].memoria_global)
-    # print(self.call_stack[-1].memoria_local)
-    # print(self.call_stack[-1].memoria_temporal)
-    # print(self.call_stack[-1].memoria_constante)
+    print("end")
+    print(self.call_stack[-1].memoria_global)
+    print(self.call_stack[-1].memoria_local)
+    print(self.call_stack[-1].memoria_temporal)
+    print(self.call_stack[-1].memoria_constante)
+    print(directorio_funciones) 
 
   #Manejador de ejecución
   def execute_quad(self, quad):
-    # print("executing quad number ", self.ip_stack[-1])
-    # quad.print_quad()
+    print("executing quad number ", self.ip_stack[-1])
+    quad.print_quad()
     if quad.op == "goto":
       self.goto(quad)
     elif quad.op == "=":
       self.assign(quad)
-    elif quad.op in ["+", "-", "/", "*", "&&", "||", ">", "<", ">=", "<=", "=="]:
+    elif quad.op in ["+", "-", "/", "*", "&&", "||", ">", "<", ">=", "<=", "==", "!="]:
       self.operation(quad)
     elif quad.op == "print":
       self.print(quad)
@@ -46,6 +51,8 @@ class VM():
       self.gosub(quad)
     elif quad.op == "return":
       self.ret(quad)
+    elif quad.op == "ver":
+      self.ver(quad)
 
   #Una función para cada operación de la MV
   def goto(self, quad):
@@ -64,7 +71,7 @@ class VM():
 
   def print(self, quad):
     #Obtener dirección
-    res_dir = quad.res
+    res_dir = self.get_address(quad.res)
     value = self.call_stack[-1].get_value(res_dir)
     #Imprimir
     print(value)
@@ -73,7 +80,7 @@ class VM():
   def assign(self, quad):
     #Obtener direcciones
     add1 = quad.opr1
-    add2 = quad.res
+    add2 = self.get_address(quad.res)
     #Obtener el valor a asignar
     value = self.call_stack[-1].get_value(add1)
     #Realizar asignación de valor
@@ -84,17 +91,28 @@ class VM():
   def operation(self, quad):
     #Obtener direcciones
     op = quad.op
-    add1 = quad.opr1
-    add2 = quad.opr2
+    add1 = self.get_address(quad.opr1)
+    add2 = self.get_address(quad.opr2)
     res_dir = quad.res
     #Obtener memoria 
     current_memory = self.call_stack[-1]
     #Obtener valores de las direcciones y realizar operación
     val1 = current_memory.get_value(add1)
     val2 = current_memory.get_value(add2)
-    if op == '*': res = val1 * val2
+    if (val1 == 'na' or val2 == 'na') and (res_dir < 13000 and res_dir > 13999):
+      raise variableNoValue("There is a variable with no value assigned")
+    if op == '*': 
+      if add2 < 1000:
+        #Add2 no es una dirección, es Mn
+        val2 = add2
+      res = val1 * val2
     elif op == '/': res = val1 / val2
-    elif op == '+': res = val1 + val2
+    elif op == '+': 
+      #Puede ser una suma de dirB
+      if res_dir >= 13000 and res_dir <= 13999:
+        res = val1 + add2
+      else:
+        res = val1 + val2
     elif op == '-': res = val1 - val2
     elif op == '&&': res = val1 and val2
     elif op == '||': res = val1 or val2
@@ -103,6 +121,7 @@ class VM():
     elif op == '>=': res = val1 >= val2
     elif op == '<=': res = val1 <= val2
     elif op == '==': res = val1 == val2
+    elif op == '!=': res = val1 != val2
     #Asignar resultado
     self.call_stack[-1].assign(res_dir, res)
     self.ip_stack[-1] += 1
@@ -185,5 +204,20 @@ class VM():
     #Sacar la memoria actual
     self.call_stack.pop()
 
-
-    
+  def ver(self, quad):
+    #Obtener limite superior
+    limS = quad.res
+    #Obtener índice a verificar
+    index = quad.opr1
+    value = self.call_stack[-1].get_value(index)
+    #Verificar
+    if value < 0 or value >= limS:
+      raise indexOutOfBonds(f"Index {value} is out of range")
+    #Siguiente 
+    self.ip_stack[-1] += 1
+  
+  def get_address(self, addr):
+    #Función de ayuda para obtener la dirección de un pointer
+    if addr >= 13000 and addr <= 13999:
+      return self.call_stack[-1].get_value(addr)
+    return addr

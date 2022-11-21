@@ -1,7 +1,7 @@
 func string: dame (int : x){
   string : palabra[3];
   int : b = 3;
-  ret palabra[2];
+  ret palabra[b-1];
 }
 
 main {
