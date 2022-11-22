@@ -54,3 +54,4 @@ Proyecto para la clase de Diseño de Compiladores
 - La máquina virtual ejecuta estatutos condicionales y ciclos
 - La máquina virtual ejecuta funciones correctamente
 - La máquina virtual maneja la recursividad correctamente con una pila de IP
+- Se agregaron funciones predefinidas
