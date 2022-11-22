@@ -644,8 +644,12 @@ class Luyer(Visitor):
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         #Checar ID en tabla
         if id in tabla_vars and tabla_vars[id]['arr']:
-            pTipos.append("float")
-            direccion = memoria.push_temp("float")
+            if array_op == "len":
+                direccion = memoria.push_temp("int")
+                pTipos.append("int")
+            else:
+                direccion = memoria.push_temp("float")
+                pTipos.append("float")
             size = tabla_vars[id]['size']
             direccion_arr = tabla_vars[id]['direccion']
             pilaO.append(direccion)
@@ -661,6 +665,8 @@ class Luyer(Visitor):
         tabla_vars = directorio_funciones[self.scope]['tabla_vars']
         #Checar ID en tabla
         if id in tabla_vars and tabla_vars[id]['arr']:
+            if tabla_vars[id]['tipo'] != 'int':
+                raise functionTypeError("Fill function only works on integer arrays!")
             size = tabla_vars[id]['size']
             direccion_arr = tabla_vars[id]['direccion']
             cuadruplos.append(Quad("fill", method, size, direccion_arr))

@@ -54,7 +54,7 @@ class VM():
       self.ret(quad)
     elif quad.op == "ver":
       self.ver(quad)
-    elif quad.op in ["mean", "max", "min", "std"]:
+    elif quad.op in ["mean", "max", "min", "std", "len"]:
       self.array_op(quad)
     elif quad.op == "fill":
       self.fill(quad)
@@ -77,14 +77,17 @@ class VM():
   def print(self, quad):
     #Obtener dirección
     res_dir = self.get_address(quad.res)
-    value = self.call_stack[-1].get_value(res_dir)
+    value = str(self.call_stack[-1].get_value(res_dir))
     #Imprimir
-    print(value)
+    if value[-2:] == "/n":
+      print(value[0:-2])
+    else:
+      print(value, end=" ")
     self.ip_stack[-1] += 1
 
   def assign(self, quad):
     #Obtener direcciones
-    add1 = quad.opr1
+    add1 = self.get_address(quad.opr1)
     add2 = self.get_address(quad.res)
     #Obtener el valor a asignar
     value = self.call_stack[-1].get_value(add1)
@@ -178,6 +181,9 @@ class VM():
     #Obtener la dirección en la siguiente memoria
     function_name = quad.res
     next_addr = directorio_funciones[function_name]['params'][p_num - 1]['direccion']
+    #Probar que haya valor
+    if val == 'na':
+      raise variableNoValue(f"Parameter for function call {function_name} has no value!")
     #Asignar el valor en la nueva memoria
     self.next_mem.assign(next_addr, val)
     self.ip_stack[-1] += 1
@@ -200,6 +206,9 @@ class VM():
     #Obtener dirección y el valor a asignar
     dir = self.get_address(quad.res)
     value = self.call_stack[-1].get_value(dir)
+    #Probar que haya valor
+    if value == 'na':
+      raise variableNoValue(f"Function return {nombre} has no value!")
     #Obtener variable global
     dir_res = directorio_funciones['global']['tabla_vars'][nombre]['direccion']
     #Asignarla a la memoria anterior
@@ -215,6 +224,9 @@ class VM():
     #Obtener índice a verificar
     index = quad.opr1
     value = self.call_stack[-1].get_value(index)
+    #Probar que haya valor
+    if value == 'na':
+      raise variableNoValue(f"Index has no value!")
     #Verificar
     if value < 0 or value >= limS:
       raise indexOutOfBonds(f"Index {value} is out of range")
@@ -236,7 +248,10 @@ class VM():
     arr_size = quad.opr2
     i = 0
     while i < arr_size:
-      value_list.append(self.call_stack[-1].get_value(arr_dir + i))
+      val = self.call_stack[-1].get_value(arr_dir + i)
+      if val == 'na':
+        raise variableNoValue(f"There is no value on index {i}")
+      value_list.append(val)
       i += 1
     if quad.op == "mean":
       self.call_stack[-1].assign(res_dir, np.mean(value_list))
@@ -246,6 +261,8 @@ class VM():
       self.call_stack[-1].assign(res_dir, max(value_list))
     elif quad.op == "min":
       self.call_stack[-1].assign(res_dir, min(value_list))
+    elif quad.op == "len":
+      self.call_stack[-1].assign(res_dir, len(value_list))
     #Siguiente ip
     self.ip_stack[-1] += 1
   

@@ -116,6 +116,7 @@ var_cte: SIGNED_FLOAT -> flo
 | STD "(" ID ")" -> array_op
 | MAX "(" ID ")" -> array_op
 | MIN "(" ID ")" -> array_op
+| LEN "(" ID ")" -> array_op
 
 tipo: tipo1 tipo2
 tipo1: INT | FLOAT | STRING | BOOL
@@ -136,7 +137,7 @@ FILL: "fill"
 STD: "std"
 MIN: "min"
 MAX: "max"
-
+LEN: "len"
 
 
 %import common.SIGNED_FLOAT
