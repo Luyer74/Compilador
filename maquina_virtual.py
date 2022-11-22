@@ -1,6 +1,7 @@
 from luyer import directorio_funciones, memoria as memoria_main
 from memoria import Memoria
 from errors import *
+import numpy as np
 
 class VM():
   def __init__(self, quads):
@@ -12,27 +13,27 @@ class VM():
   def execute(self):
     #Iniciar con la memoria del main
     self.call_stack.append(memoria_main)
-    print(self.call_stack[-1].memoria_global)
-    print(self.call_stack[-1].memoria_local)
-    print(self.call_stack[-1].memoria_temporal)
-    print(self.call_stack[-1].memoria_constante)
-    for i, quad in enumerate(self.quads):
-      print(i + 1)
-      quad.print_quad()
+    # print(self.call_stack[-1].memoria_global)
+    # print(self.call_stack[-1].memoria_local)
+    # print(self.call_stack[-1].memoria_temporal)
+    # print(self.call_stack[-1].memoria_constante)
+    # for i, quad in enumerate(self.quads):
+    #   print(i + 1)
+    #   quad.print_quad()
     #Comenzamos ejecución de cuádruplos
     while(self.quads[self.ip_stack[-1] - 1].op != "endprogram"):
       self.execute_quad(self.quads[self.ip_stack[-1] - 1])
-    print("end")
-    print(self.call_stack[-1].memoria_global)
-    print(self.call_stack[-1].memoria_local)
-    print(self.call_stack[-1].memoria_temporal)
-    print(self.call_stack[-1].memoria_constante)
-    print(directorio_funciones) 
+    # print("end")
+    # print(self.call_stack[-1].memoria_global)
+    # print(self.call_stack[-1].memoria_local)
+    # print(self.call_stack[-1].memoria_temporal)
+    # print(self.call_stack[-1].memoria_constante)
+    # print(directorio_funciones) 
 
   #Manejador de ejecución
   def execute_quad(self, quad):
-    print("executing quad number ", self.ip_stack[-1])
-    quad.print_quad()
+    # print("executing quad number ", self.ip_stack[-1])
+    # quad.print_quad()
     if quad.op == "goto":
       self.goto(quad)
     elif quad.op == "=":
@@ -53,6 +54,10 @@ class VM():
       self.ret(quad)
     elif quad.op == "ver":
       self.ver(quad)
+    elif quad.op in ["mean", "max", "min", "std"]:
+      self.array_op(quad)
+    elif quad.op == "fill":
+      self.fill(quad)
 
   #Una función para cada operación de la MV
   def goto(self, quad):
@@ -193,7 +198,7 @@ class VM():
     #Obtener nombre de la función
     nombre = quad.opr1
     #Obtener dirección y el valor a asignar
-    dir = quad.res
+    dir = self.get_address(quad.res)
     value = self.call_stack[-1].get_value(dir)
     #Obtener variable global
     dir_res = directorio_funciones['global']['tabla_vars'][nombre]['direccion']
@@ -221,3 +226,50 @@ class VM():
     if addr >= 13000 and addr <= 13999:
       return self.call_stack[-1].get_value(addr)
     return addr
+
+  def array_op(self, quad):
+    #Obtener memoria actual
+    res_dir = quad.res
+    #Obtener todo el arreglo
+    arr_dir = quad.opr1
+    value_list = []
+    arr_size = quad.opr2
+    i = 0
+    while i < arr_size:
+      value_list.append(self.call_stack[-1].get_value(arr_dir + i))
+      i += 1
+    if quad.op == "mean":
+      self.call_stack[-1].assign(res_dir, np.mean(value_list))
+    elif quad.op == "std":
+      self.call_stack[-1].assign(res_dir, np.std(value_list))
+    elif quad.op == "max":
+      self.call_stack[-1].assign(res_dir, max(value_list))
+    elif quad.op == "min":
+      self.call_stack[-1].assign(res_dir, min(value_list))
+    #Siguiente ip
+    self.ip_stack[-1] += 1
+  
+  def fill(self, quad):
+    #Obtener memoria actual
+    res_dir = quad.res
+    #Obtener todo el arreglo
+    method = quad.opr1
+    arr_size = quad.opr2
+    i = 0
+    res_arr = []
+    #Generar arreglo de acuerdo al método
+    if method == "arange":
+      res_arr = np.arange(arr_size)
+    elif method == "zero":
+      res_arr = np.zeros((arr_size,), dtype=int)
+    elif method == "ones":
+      res_arr = np.ones((arr_size,), dtype=int)
+    elif method == "random":
+      res_arr = np.random.randint(0, arr_size, arr_size)
+    else:
+      raise fillError(f"Invalid parameter {method} for fill function")
+    while i < arr_size:
+      self.call_stack[-1].assign(res_dir, res_arr[i])
+      res_dir += 1
+      i += 1
+    self.ip_stack[-1] += 1

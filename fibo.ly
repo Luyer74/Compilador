@@ -7,6 +7,6 @@ func int : fibo (int : x){
 
 main{
   int : ans;
-  ans = fibo(20);
+  ans = fibo(6);
   out(ans);
 }

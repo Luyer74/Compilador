@@ -42,3 +42,6 @@ class returnTypeError(Exception):
 
 class indexOutOfBonds(Exception):
   pass
+
+class fillError(Exception):
+  pass

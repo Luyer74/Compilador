@@ -4,5 +4,5 @@ func int : sum(int : x, int : y){
 
 main {
   int : i = 0;
-  out(sum(1, sum(1, 2)));
+  out(sum(1,2), sum(1,2));
 }

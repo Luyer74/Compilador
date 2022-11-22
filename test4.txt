@@ -1,0 +1,7 @@
+main {
+  int : a[100];
+  float : a_mean;
+  fill("arange", a);
+  a_mean = std(a);
+  out(a_mean);
+}

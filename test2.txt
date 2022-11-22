@@ -1,11 +1,13 @@
 func string: dame (int : x){
   string : palabra[3];
   int : b = 3;
+  palabra[2] = "ola";
   ret palabra[b-1];
 }
 
 main {
   string : a;
   string : b[5];
-  b[2] =  "uwu" + dame(3) + b[2];
+  b[2] = "owo";
+  b[2] = "uwu" + dame(3) + b[2];
 }

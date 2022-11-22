@@ -23,13 +23,17 @@ bloque: "{" estatuto1 "}"
 estatuto1: estatuto2 |
 estatuto2: estatuto estatuto1
 
-estatuto: while | condicion | out | asignacion | asignacion_arr | return | llamada_void
+estatuto: while | condicion | predef | asignacion | asignacion_arr | return | llamada_void
 
 llamada_void: is_void llamada ";"
+predef: out | fill
+
 out: PRINT "(" expresion escritura out1* ")" ";"
 out1: "," expresion escritura
 escritura:
 is_void:
+
+fill: FILL "(" ESCAPED_STRING "," ID ")" ";"
 
 return: RET expresion end_return ";"
 end_return:
@@ -108,6 +112,10 @@ var_cte: SIGNED_FLOAT -> flo
 | ID -> id
 | ESCAPED_STRING -> string
 | array_access
+| MEAN "(" ID ")" -> array_op
+| STD "(" ID ")" -> array_op
+| MAX "(" ID ")" -> array_op
+| MIN "(" ID ")" -> array_op
 
 tipo: tipo1 tipo2
 tipo1: INT | FLOAT | STRING | BOOL
@@ -123,6 +131,12 @@ FALSE: "false"
 RET: "ret"
 VOID: "void"
 PRINT: "out"
+MEAN: "mean"
+FILL: "fill"
+STD: "std"
+MIN: "min"
+MAX: "max"
+
 
 
 %import common.SIGNED_FLOAT

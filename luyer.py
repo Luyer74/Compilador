@@ -635,4 +635,36 @@ class Luyer(Visitor):
     
     def endprogram(self,tree):
         cuadruplos.append(Quad("endprogram", None, None, None))
+
+    #Funciones predefinidas
+    def array_op(self, tree):
+        array_op = tree.children[0]
+        #Obtener ID
+        id = tree.children[1]
+        tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        #Checar ID en tabla
+        if id in tabla_vars and tabla_vars[id]['arr']:
+            pTipos.append("float")
+            direccion = memoria.push_temp("float")
+            size = tabla_vars[id]['size']
+            direccion_arr = tabla_vars[id]['direccion']
+            pilaO.append(direccion)
+            cuadruplos.append(Quad(array_op, direccion_arr, size, direccion))
+        else:
+            raise functionTypeError("Mean function takes only an array!")
+
+    def fill(self, tree):
+        #Obtener ID
+        method = tree.children[1]
+        method = method.replace('"', '')
+        id = tree.children[2]
+        tabla_vars = directorio_funciones[self.scope]['tabla_vars']
+        #Checar ID en tabla
+        if id in tabla_vars and tabla_vars[id]['arr']:
+            size = tabla_vars[id]['size']
+            direccion_arr = tabla_vars[id]['direccion']
+            cuadruplos.append(Quad("fill", method, size, direccion_arr))
+        else:
+            raise functionTypeError("Fill function takes only an array!")
+        
     
