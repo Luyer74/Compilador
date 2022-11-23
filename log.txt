@@ -1,0 +1,185 @@
+commit 10e52b0c6ad33d94dd7b8105d3f74daab6bb5c9b
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Tue Nov 22 22:33:52 2022 -0600
+
+    actualizar readme
+
+commit 5035ec7ef01a6e57cea7d964386cc805bc27ecea
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Tue Nov 22 15:34:46 2022 -0600
+
+    pruebas
+
+commit 65dd86299956aca4417e3c0e25baed4b04bf3055
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Nov 21 22:18:50 2022 -0600
+
+    actualizar README
+
+commit d52dce4e802e1a91514bea9c7f4815cebb4c652a
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Nov 21 22:18:11 2022 -0600
+
+    funciones estadisticas
+
+commit 04be918cce66fe49a96f3ee9c97c7cd5796c00d2
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sun Nov 20 22:25:23 2022 -0600
+
+    ejecución de arreglos
+
+commit c0726cf57b24845cb67f6f3e4cd4d83cddd4d98e
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sat Nov 19 20:02:59 2022 -0600
+
+    ejecución de funciones
+
+commit 4700336b51fefa9d32768100b7da45fb58e61c95
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Fri Nov 18 16:10:20 2022 -0600
+
+    maquina virtual
+
+commit d24c10592d6810945a7016e2bc1ff2e8d5b7f65f
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Thu Nov 17 17:25:13 2022 -0600
+
+    actualizar readme
+
+commit b9dcdf409e7ef2d4b2c41c503796901a540c959e
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Thu Nov 17 17:24:30 2022 -0600
+
+    add array assignment
+
+commit ae498b63798c9dd059546b882be5e4ac46c9391b
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Wed Nov 16 20:32:22 2022 -0600
+
+    agregar arreglos de n dimensiones
+
+commit dc2e2e6f3cf577fb21b960ab4f663e8a135f6694
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Wed Nov 16 01:33:10 2022 -0600
+
+    sintaxis de arreglos, puntos para declaraciones de arreglos de n dim
+
+commit 31b5924841be71ef7f52bc5f36551da8dae95b73
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Tue Nov 15 09:44:57 2022 -0600
+
+    manejar llamadas anidadas
+
+commit d01035942c173cffaf5ece6836fdbfb756e97cdb
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sun Nov 13 18:49:02 2022 -0600
+
+    actualizar readme
+
+commit a94960d507db166aeb4dd32b238c5be82f4f033c
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sun Nov 13 18:48:15 2022 -0600
+
+    manejo de funciones tipadas y void
+
+commit ef0c16f9b4479102e470e4413f2a2fbf18f22c19
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Nov 7 23:20:50 2022 -0600
+
+    actualizar README
+
+commit 1b86d50fea2a46ec6cd1ade11c229f7054ea9688
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Nov 7 23:17:12 2022 -0600
+
+    generacion de cuadruplos de funciones
+
+commit 79c31037f9d23d1a2b9e521bcebbe5210417d6b5
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sun Nov 6 20:50:26 2022 -0600
+
+    agregar clase para memoria y manejar direcciones
+
+commit 3183b49c0f480d323a1d5a48123f4ff238fc3e96
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Fri Nov 4 16:23:57 2022 -0600
+
+    actualizar readme
+
+commit 91492d9c64c598463176953dec572cf18969e5d5
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Fri Nov 4 16:21:34 2022 -0600
+
+    add globals
+
+commit c2214e07f9d969ac6bf381f316dbbae3c7888912
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 31 17:28:26 2022 -0600
+
+    agregar parentesis en operaciones, arreglar ciclos
+
+commit d94898da32eca4c2aadc8b77dbb02a4fec2d6c73
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sat Oct 29 19:08:59 2022 -0500
+
+    actualizar readme
+
+commit e282ff6d44f58455c2327350900122329ba04c9f
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Sat Oct 29 18:59:19 2022 -0500
+
+    generacion de cuadruplos con objeto y agregar while
+
+commit 5b0fcd8cd2da74df79eb9c34ad6266bef7c13f4c
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Wed Oct 26 19:47:10 2022 -0500
+
+    agregar asignación
+
+commit 6ef506b431cb18dbebc879837ce6a779489a39b3
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 17 23:32:54 2022 -0500
+
+    actualizar README
+
+commit 7b2b78c89456e42c17c899b433bbd37190e4b0fc
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 17 23:30:13 2022 -0500
+
+    agregar semántica de variables y operaciones básicas
+
+commit e6555ac2508cde3f9d76b5330e1bf1660465a3e6
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Wed Oct 12 19:36:23 2022 -0500
+
+    agregar directorio de funciones y variables
+
+commit 10e616847724acad465bee37e4826beea6a66e86
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 10 22:31:28 2022 -0500
+
+    actualizar readme
+
+commit f95fc049421bccff5aebbfae215d4ad781f3eadc
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 10 21:17:20 2022 -0500
+
+    agregar cubo
+
+commit 078f2a60851d31e83d6838846dfc2ad70455a032
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 3 16:54:09 2022 -0500
+
+    Actualizar readme
+
+commit 2cf2f36656c5ead47c0b530e716d691fd89b6c8c
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 3 16:51:30 2022 -0500
+
+    lexico y sintaxis
+
+commit c5ae9039976c8a395bdaa8c44ec556a0746eea57
+Author: Luis Yerik Arambula <A00825080@itesm.mx>
+Date:   Mon Oct 3 15:39:26 2022 -0500
+
+    Initial commit

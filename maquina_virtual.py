@@ -222,7 +222,7 @@ class VM():
     #Obtener limite superior
     limS = quad.res
     #Obtener índice a verificar
-    index = quad.opr1
+    index = self.get_address(quad.opr1)
     value = self.call_stack[-1].get_value(index)
     #Probar que haya valor
     if value == 'na':
