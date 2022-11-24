@@ -91,3 +91,10 @@ Luyer cuenta con funciones auxiliares.
 `std(arreglo)` : Regresa el valor de desviación estándar de un arreglo
 
 `len(arreglo)` : Regresa la longitud de un arreglo
+
+### Ejecución
+
+Para ejecutar un programa en Luyer, debemos reemplezar una parte del archivo `compilador.py`
+
+En la sección de
+`input = open("./pruebas/array_test.ly", "r").read()` se reemplaza el archivo actual por tu propio archivo, el cual puede tener cualquier terminación.

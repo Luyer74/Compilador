@@ -4,7 +4,7 @@ from maquina_virtual import VM
 l = Lark(open("lexicoysintaxis.lark", "r").read())
 
 try:
-  input = open("./pruebas/array_test.ly", "r").read()
+  input = open("./pruebas/prueba.ly", "r").read()
   arbol = l.parse(input)
 except EOFError:
   print(EOFError)
