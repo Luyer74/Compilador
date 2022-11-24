@@ -1,58 +1,93 @@
-# Compilador
+# Lenguaje Luyer
 
-Proyecto para la clase de Diseño de Compiladores
+Proyecto para la materia de diseño de compiladores del semestre Agosto-Diciembre 2022.
 
-### Avance semana 1
+## Setup
 
-- Se implementó análisis léxico y sintáctico con LARK.
+Luyer es un lenguaje hecho en Python, por lo que este se necesita para ejecutarlo.
 
-### Avance semana 2
+Además, ya con python instalado, se necesitan descargar e instalar dos librerías, LARK y NumPy. Para instalarla ejecuta los siguiente en tu terminal.
 
-- Se agregó el cubo semántico
+`pip install lark`  
+`pip install numpy`
 
-### Avance semana 3
+Después clona este repositorio
 
-- Se agregó semántica inicial para funciones y main, junto con el directorio de funciones y tablas de variables correspondientes
-- Se implementaron puntos neurálgicos para operaciones aritméticas de suma, resta, multiplicación y división
-- Se creó un objeto para cuádruplos y se empezaron a imprimir los primeros con los puntos anteriores
+`git clone https://github.com/Luyer74/Compilador`
 
-### Avance semana 4
+## Sintaxis y ejecución
 
-- Se agregó la semántica para asignaciones, condiciones y ciclo while.
-- Los valores de las variables ahora son manejados correctamente por el directorio
-- Se agregaron errores comunes como variables duplicadas o valores inválidos
-- Se agregaron variables globales
+La estructura de un programa hecho en Luyer es
+`Globales -> Funciones -> Main `
 
-### Avance semana 5
+### Variables
 
-- Se agregó la semántica para funciones
-- Se agregó la tabla de párametros
-- Se creó la clase Memoria mediante varias estructuras
-- Se manejan direcciones de memoria para todas las variables correctamente
-- Se guardan los cuádruplos de inicio de cada función y del main
-- Se inició la implementación de cuádruplos de funciones, return aun sin funcionar
+Las variables en Luyer se pueden declarar localmente o globalmente. Como se vió en la estructura anterior, las globales son lo primero. Las variables locales se declaran al inicio de main o de cada función para ser accesadas ahí mismo. Las variables se pueden declarar sin valor
 
-### Avance semana 6
+`int : i`
 
-- Se modificó la sintáxis para el uso de return, funciones void y con tipo
-- Se creó la tabla de constantes
-- Se agregó la tabla de parámetros
-- Los parámetros se verifican, con su tipo y orden
-- Las funciones void y return se manejan correctamente
-- Se manejan llamadas dentro de llamadas con una pila de llamadas
+o con valor asignado
 
-### Avance semana 7
+`int : i = 0`
 
-- Se maneja la declaración de arreglos de n dimensiones utilizando indexado de tipo C
-- Se maneja el acceso de arreglos y su uso en operaciones
-- La memoria se aparta correctamente para los arreglos
-- Se maneja la asignación en arreglos
-- Se creó la máquina virtual con una clase
-- La máquina virtual lee cuádruplos en el orden correcto
-- La máquina virtual realiza operaciones aritméticas y de asignación
-- La clase memoria maneja asignaciones de valores correctamente
-- La máquina virtual ejecuta estatutos condicionales y ciclos
-- La máquina virtual ejecuta funciones correctamente
-- La máquina virtual maneja la recursividad correctamente con una pila de IP
-- Se agregaron funciones predefinidas
-- Se probaron los casos de prueba exitosamente
+### Condiciones
+
+Las condiciones siguen la sintaxis estándar
+
+```
+    if (i != 0){
+      out(i);
+    } else{
+      out("fin");
+    }
+```
+
+### Ciclos
+
+Se cuentan con ciclos de tipo while
+
+```
+  while (i < 100){
+    out(i);
+    i = i + 1;
+  }
+```
+
+### Funciones
+
+Para funciones, se sigue el siguiente formato
+
+```
+  func int : suma(int : x, int : y){
+    ret x + y;
+  }
+```
+
+### Variables con Dimensiones
+
+Luyer maneja variables de N dimensiones.
+
+```
+int : a[10, 5, 2];
+```
+
+### Funciones estadísticas
+
+Luyer cuenta con funciones auxiliares.
+
+`fill(método, arreglo)`: Llena un arreglo con el método especificado.
+
+- "zeros", arreglo: llena con ceros
+- "ones", arreglo: llena con unos
+- "arange", arreglo: llena con números de 0 al tamaño del arreglo en orden
+- "random", arreglo: llena con números aleatorios en un rango de 0 al tamaño del arreglo
+
+`min(arreglo)` : Regresa el valor mínimo de un arreglo
+
+`max(arreglo)` : Regresa el valor máximo de un arreglo
+
+`mean(arreglo)` : Regresa el valor promedio de un arreglo
+
+`std(arreglo)` : Regresa el valor de desviación estándar de un arreglo
+
+`len(arreglo)` : Regresa la longitud de un arreglo
