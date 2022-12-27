@@ -174,7 +174,7 @@ class VM():
 
   def param(self, quad):
     #Obtener el valor del parámetro
-    dir_val = quad.opr1
+    dir_val = self.get_address(quad.opr1)
     val = self.call_stack[-1].get_value(dir_val)
     #Obtener el número del parámetro
     p_num = quad.opr2
@@ -222,7 +222,7 @@ class VM():
     #Obtener limite superior
     limS = quad.res
     #Obtener índice a verificar
-    index = quad.opr1
+    index = self.get_address(quad.opr1)
     value = self.call_stack[-1].get_value(index)
     #Probar que haya valor
     if value == 'na':
